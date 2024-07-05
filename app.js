@@ -16,9 +16,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadMoreButton.style.display = "none";
 
-  const existingOverlay = document.querySelector(".video-overlay");
-  const existingWarning = document.querySelector(".warning");
-
   if (!apiKey) {
     apiKey = prompt(
       "Por favor coloque sua chave do youtube (se não saber o que é, só mande mensagem pra mim):"
@@ -270,7 +267,7 @@ document.addEventListener("DOMContentLoaded", () => {
             videoPlayer.style.display = "none";
           }
 
-          playerContainer.style.display = "flex"; // Show the player container
+          playerContainer.style.display = "flex";
         } else {
           alert("Não foi possível encontrar o link para reprodução. Desculpe.");
         }
@@ -281,7 +278,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   };
 
-  // Check URL parameters and initialize search if needed
   function initFromUrlParams() {
     const params = new URLSearchParams(window.location.search);
     const query = params.get("query");
