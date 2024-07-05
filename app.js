@@ -9,10 +9,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const urlButton = document.getElementById("urlButton");
   const searchForm = document.getElementById("searchForm");
   const urlForm = document.getElementById("urlForm");
+  const audioInput = document.getElementById("audio");
+
+  const playerContainer = document.getElementById("player-container");
+  const videoPlayer = document.getElementById("video-player");
+  const audioPlayer = document.getElementById("audio-player");
 
   let apiKey = localStorage.getItem("youtubeApiKey");
   let nextPageToken = "";
   let isMusicOnly = false;
+  let area;
 
   loadMoreButton.style.display = "none";
 
@@ -253,20 +259,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const downloadUrl = data.url;
         if (downloadUrl) {
-          const playerContainer = document.getElementById("player-container");
-          const videoPlayer = document.getElementById("video-player");
-          const audioPlayer = document.getElementById("audio-player");
-
           if (type === "video") {
             videoPlayer.src = downloadUrl;
             videoPlayer.style.display = "block";
             audioPlayer.style.display = "none";
           } else {
+            audioPlayer.crossOrigin = "anonymous";
             audioPlayer.src = downloadUrl;
             audioPlayer.style.display = "block";
             videoPlayer.style.display = "none";
+            audioPlayer.load();
+            startVis(audioPlayer);
           }
-
           playerContainer.style.display = "flex";
         } else {
           alert("Não foi possível encontrar o link para reprodução. Desculpe.");
@@ -317,4 +321,139 @@ function formatDuration(duration) {
   }
 
   return "Unknown";
+}
+
+// 3d visualizer shit here
+function clearScene() {
+  const canvas = area.firstElementChild;
+  area.removeChild(canvas);
+}
+
+function startVis(audioPlayer) {
+  const area = document.getElementById("visualizer");
+  if (!area) {
+    console.error("Element with ID 'visualizer' not found.");
+    return;
+  }
+
+  const context = new AudioContext();
+  const source = context.createMediaElementSource(audioPlayer);
+  const analyser = context.createAnalyser();
+  source.connect(analyser);
+  analyser.connect(context.destination);
+  analyser.fftSize = 512;
+  const bufferLength = analyser.frequencyBinCount;
+  const dataArray = new Uint8Array(bufferLength);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(
+    75,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000
+  );
+  camera.position.z = 100;
+  scene.add(camera);
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor("#1e1e2e");
+
+  area.appendChild(renderer.domElement);
+
+  const geometry = new THREE.IcosahedronGeometry(20, 3);
+  const material = new THREE.MeshLambertMaterial({
+    color: "#696969",
+    wireframe: true,
+  });
+  const sphere = new THREE.Mesh(geometry, material);
+
+  const light = new THREE.DirectionalLight("#ffffff", 0.8);
+  light.position.set(0, 50, 100);
+  scene.add(light);
+  scene.add(sphere);
+
+  area.addEventListener("click", () => {
+    if (audioPlayer.paused) {
+      audioPlayer.play();
+    } else {
+      audioPlayer.pause();
+    }
+  });
+
+  window.addEventListener("resize", () => {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+  });
+
+  function render() {
+    analyser.getByteFrequencyData(dataArray);
+
+    const lowerHalf = Array.from(dataArray.slice(0, dataArray.length / 2 - 1));
+    const upperHalf = Array.from(
+      dataArray.slice(dataArray.length / 2 - 1, dataArray.length - 1)
+    );
+
+    const lowerMax = Math.max(...lowerHalf);
+    const upperAvg = upperHalf.reduce((a, b) => a + b, 0) / upperHalf.length;
+
+    const lowerMaxFr = modulate(
+      Math.pow(lowerMax / lowerHalf.length, 0.8),
+      0,
+      1,
+      0,
+      8
+    );
+    const upperAvgFr = modulate(upperAvg / upperHalf.length, 0, 1, 0, 4);
+
+    sphere.rotation.x += 0.001;
+    sphere.rotation.y += 0.003;
+    sphere.rotation.z += 0.005;
+
+    WarpSphere(sphere, lowerMaxFr, upperAvgFr);
+    requestAnimationFrame(render);
+    renderer.render(scene, camera);
+  }
+
+  function WarpSphere(mesh, bassFr, treFr) {
+    let noise = new SimplexNoise();
+    mesh.geometry.vertices.forEach(function (vertex, i) {
+      var offset = mesh.geometry.parameters.radius;
+      var amp = 0.7;
+      var time = window.performance.now();
+      vertex.normalize();
+      var rf = 0.0001;
+      var distance =
+        offset +
+        bassFr +
+        noise.noise3D(
+          vertex.x + time * rf * 4,
+          vertex.y + time * rf * 6,
+          vertex.z + time * rf * 7
+        ) *
+          amp *
+          treFr *
+          2;
+      vertex.lerp(vertex.clone().multiplyScalar(distance), 1.5);
+    });
+    mesh.geometry.verticesNeedUpdate = true;
+    mesh.geometry.normalsNeedUpdate = true;
+    mesh.geometry.computeVertexNormals();
+    mesh.geometry.comput;
+  }
+  render();
+}
+
+function modulate(value, minInput, maxInput, minOutput, maxOutput) {
+  const inputRange = maxInput - minInput;
+  const outputRange = maxOutput - minOutput;
+
+  value = Math.min(Math.max(value, minInput), maxInput);
+
+  const normalizedValue = (value - minInput) / inputRange;
+
+  const outputValue = normalizedValue * outputRange + minOutput;
+
+  return outputValue;
 }

@@ -35,10 +35,16 @@
         <button id="music" class="music-button">Músicas</button>
     </div>
     <div id="player-container">
+        <div id="visualizer">
+            <audio id="audio-player" controls></audio>
+            <div id="canvisualizer" width="1214" height="951"></div>
+            <p>Clique na tela para começar a musica.</p>
+        </div>
         <video id="video-player" controls></video>
-        <audio id="audio-player" controls></audio>
       </div>
     
     <script src="app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/102/three.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.3.0/simplex-noise.min.js"></script>
 </body>
 </html>

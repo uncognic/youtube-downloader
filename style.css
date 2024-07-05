@@ -382,5 +382,19 @@ body.blurred::before {
   #audio-player {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    z-index: 9999999;
+  }
+
+  #visualizer {
+    position: absolute;
+    color:#1e1e2e;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+  }
+
+  #canvisualizer {
+    position: absolute;
+    color: #1e1e2e;
   }
