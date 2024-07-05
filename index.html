@@ -10,20 +10,24 @@
 </head>
 <body>
     <h1>Youtube Downloader</h1>
-    <div class="box" style="margin-bottom: 30px;">
+    <form id="searchForm" class="box" style="margin-bottom: 20px;">
         <input type="text" id="searchInput" placeholder="Pesquisar Youtube..." />
         <a href="#" id="searchButton">
             <i class="fas fa-search"></i>
         </a>
-    </div>
-    <div class="box">
+    </form>
+    <form id="urlForm" class="box">
         <input type="text" id="urlInput" placeholder="Coloque a URL do YouTube aqui..." />
         <a href="#" id="urlButton">
             <i class="fas fa-download"></i>
         </a>
-    </div>
+    </form>
     <div id="results" class="results"></div>
+    <button id="loadMoreButton" class="load-more">Carregar Mais</button>
     <button id="updateApiKeyButton" class="update-api-key-btn">Atualizar chave do youtube</button>
+    <div class="catalogue">
+        <button id="music" class="music-button">Músicas</button>
+    </div>
     <script src="app.js"></script>
 </body>
 </html>
