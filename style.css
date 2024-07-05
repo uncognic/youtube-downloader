@@ -398,3 +398,13 @@ body.blurred::before {
     position: absolute;
     color: #1e1e2e;
   }
+
+  p {
+    font-family: "Poppins";
+    font-weight: 700;
+    justify-content: center;
+    align-items: center;
+    color: #ffffff;
+    display: block;
+    margin-top: 20px;
+  }
