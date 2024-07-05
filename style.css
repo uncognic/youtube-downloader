@@ -29,20 +29,22 @@ h1 {
     border-radius: 30px;
     align-items: center;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    position: relative; /* Ensure that child elements position correctly */
 }
 
-.box:hover input {
-    width: 400px;
+.box:hover input,
+.box input:focus {
+    width: 400px; /* Expanded width */
 }
 
 .box input {
-    width: 0px;
+    width: 0px; /* Initial width */
     color: #cdd6f4;
     outline: none;
     border: none;
     font-family: "Poppins", sans-serif;
     font-weight: 500;
-    transition: 0.8s;
+    transition: width 0.8s ease; /* Smooth transition for width change */
     background: transparent;
 }
 
@@ -77,7 +79,11 @@ h1 {
 .thumbnail {
     width: 100%;
     height: auto;
+    display: block;
     transition: filter 0.3s ease;
+}
+.thumbnail-container {
+    position: relative;
 }
 
 
@@ -198,6 +204,19 @@ body.blurred::before {
     border-radius: 10px;
 }
 
+.duration {
+    position: absolute;
+    bottom: 10px;
+    right: 5px;
+    background: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    padding: 2px 5px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-family: Arial, sans-serif;
+    z-index: 10;
+  }
+
 .overlay-content h3 {
     margin: 20px 0;
 }
@@ -275,4 +294,65 @@ body.blurred::before {
 .load-more:hover {
     background-color: #414558;
     transform: scale(1.05);
+}
+
+
+.warning {
+    position: relative;
+    background-color: #e82344;
+    border: 1px solid rgba(222, 174, 159, 0)ac;
+    color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+    font-family:  "Poppins";
+    max-width: 600px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .warning p {
+    margin: 0;
+    line-height: 1.6;
+  }
+  
+  .warning a {
+    color: #0056b3;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .warning a:hover {
+    text-decoration: underline;
+  }
+
+/* Button Styling */
+.warn-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #cdd6f4;
+    cursor: pointer;
+  }
+  
+  .warn-btn:hover {
+    color: #f5c6cb;
+  }
+
+  .TOS {
+    margin-bottom: 40px;
+    color: #cdd6f4;
+    font-family: "Poppins", sans-serif;
+    font-weight: 700;
+    text-shadow: 1px 1px 8px rgba(0, 0, 0, 0.6);
+  }
+  a.button {
+    padding: 1px 6px;
+    border: 1px outset buttonborder;
+    border-radius: 3px;
+    color: buttontext;
+    background-color: buttonface;
+    text-decoration: none;
 }

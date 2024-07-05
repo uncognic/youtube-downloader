@@ -2,13 +2,19 @@
 <html lang="br">
 <head>
     <title>Youtube Downloader</title>
-    <link rel="stylesheet" href="style.css" />
+    <link id="theme-style" rel="stylesheet" href="style.css" />
     <script src="https://kit.fontawesome.com/5f0cb4421d.js" crossorigin="anonymous"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
 </head>
 <body>
+    <div class="warning">
+        <button class="warn-btn" onclick="closeWarning()">×</button>
+        <p>AVISO:<br>Esse projeto foi feito para usos pessoais. Nós não permitimos pessoas baixarem arquivos com copyright. Os projetos usados para esse site foram <a href="https://cobalt.tools/">Cobalt</a> e a API do youtube.
+        Nós não salvamos nenhum arquivo, isso só é um agregador de links. Se tiver outras perguntas,<br> olhe nosso <a href="termos.html">Termos e serviços</a>.</p>
+    </div>
+    
     <h1>Youtube Downloader</h1>
     <form id="searchForm" class="box" style="margin-bottom: 20px;">
         <input type="text" id="searchInput" placeholder="Pesquisar Youtube..." />
@@ -28,6 +34,8 @@
     <div class="catalogue">
         <button id="music" class="music-button">Músicas</button>
     </div>
+    
     <script src="app.js"></script>
+    <script src="theme-switcher.js"></script>
 </body>
 </html>
