@@ -16,6 +16,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadMoreButton.style.display = "none";
 
+  const existingOverlay = document.querySelector(".video-overlay");
+  const existingWarning = document.querySelector(".warning");
+
   if (!apiKey) {
     apiKey = prompt(
       "Por favor coloque sua chave do youtube (se não saber o que é, só mande mensagem pra mim):"
@@ -88,6 +91,8 @@ document.addEventListener("DOMContentLoaded", () => {
                   <h3>${video.title}</h3>
                   <button class="download-btn" onclick="downloadVideo('${videoId}', 'true')">Baixar MP3</button>
                   <button class="download-btn" onclick="downloadVideo('${videoId}', 'false')">Baixar MP4</button>
+                  <button class="download-btn" onclick="viewOnline('${videoId}', 'audio')">Ver Online MP3</button>
+                  <button class="download-btn" onclick="viewOnline('${videoId}', 'video')">Ver Online MP4</button>
                 </div>
               `;
 
@@ -162,7 +167,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     videos.forEach((video) => {
       const { title, thumbnails } = video.snippet;
-      const videoId = video.id; // Update this line to get videoId correctly
+      const videoId = video.id;
       const thumbnailUrl = thumbnails.high.url;
 
       const videoDuration = video.contentDetails
@@ -176,13 +181,15 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="thumbnail-container">
               <img src="${thumbnailUrl}" alt="${title}" class="thumbnail">
               <span class="duration">${videoDuration}</span>
-            </div>
-            <div class="video-info">
-              <h3>${title}</h3>
               <div class="download-buttons">
                 <button class="download-btn" onclick="downloadVideo('${videoId}', 'true')">Baixar MP3</button>
                 <button class="download-btn" onclick="downloadVideo('${videoId}', 'false')">Baixar MP4</button>
+                <button class="download-btn" onclick="viewOnline('${videoId}', 'audio')">Ver Online MP3</button>
+                <button class="download-btn" onclick="viewOnline('${videoId}', 'video')">Ver Online MP4</button>
               </div>
+            </div>
+            <div class="video-info">
+              <h3>${title}</h3>
             </div>
           `;
 
@@ -221,6 +228,56 @@ document.addEventListener("DOMContentLoaded", () => {
       .catch((error) => {
         console.error("Erro:", error);
         alert("Erro ao tentar buscar o link de download.");
+      });
+  };
+
+  window.viewOnline = function (videoId, type) {
+    const cobaltApiUrl = "https://api.cobalt.tools/api/json";
+
+    fetch(cobaltApiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        url: `https://www.youtube.com/watch?v=${videoId}`,
+        isAudioOnly: type === "audio",
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "error") {
+          alert(
+            "Este é um vídeo ao vivo. Aguarde o término da transmissão e tente novamente."
+          );
+          return;
+        }
+
+        const downloadUrl = data.url;
+        if (downloadUrl) {
+          const playerContainer = document.getElementById("player-container");
+          const videoPlayer = document.getElementById("video-player");
+          const audioPlayer = document.getElementById("audio-player");
+
+          if (type === "video") {
+            videoPlayer.src = downloadUrl;
+            videoPlayer.style.display = "block";
+            audioPlayer.style.display = "none";
+          } else {
+            audioPlayer.src = downloadUrl;
+            audioPlayer.style.display = "block";
+            videoPlayer.style.display = "none";
+          }
+
+          playerContainer.style.display = "flex"; // Show the player container
+        } else {
+          alert("Não foi possível encontrar o link para reprodução. Desculpe.");
+        }
+      })
+      .catch((error) => {
+        console.error("Erro:", error);
+        alert("Erro ao tentar buscar o link de reprodução.");
       });
   };
 

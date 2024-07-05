@@ -130,7 +130,7 @@ h1 {
     color: #cdd6f4;
     font-family: "Poppins", sans-serif;
     font-weight: 500;
-    padding: 8px 16px;
+    padding: 2px 11px;
     border-radius: 25px;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.3s ease;
@@ -214,7 +214,7 @@ body.blurred::before {
     border-radius: 5px;
     font-size: 12px;
     font-family: Arial, sans-serif;
-    z-index: 10;
+    z-index: 1;
   }
 
 .overlay-content h3 {
@@ -356,3 +356,31 @@ body.blurred::before {
     background-color: buttonface;
     text-decoration: none;
 }
+
+/* Ensure the player container covers the entire screen */
+#player-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
+    display: none; /* Hide by default */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Ensure it's on top of other elements */
+  }
+  
+  /* Style for the video player */
+  #video-player {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensure the video covers the player area */
+  }
+  
+  /* Style for the audio player */
+  #audio-player {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensure the audio player covers the player area */
+  }
