@@ -20,6 +20,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.key === "Enter") performSearch();
   });
 
+  urlButton.addEventListener("click", handleUrlInput);
+  urlInput.addEventListener("keypress", function (e) {
+    if (e.key === "Enter") handleUrlInput();
+  });
+
   updateApiKeyButton.addEventListener("click", () => {
     apiKey = prompt("Coloque uma chave nova do youtube:");
     if (apiKey) {
@@ -28,6 +33,62 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  function handleUrlInput() {
+    const url = urlInput.value;
+    if (url) {
+      const videoId = extractVideoIdFromUrl(url);
+      if (videoId) {
+        showVideoOverlay(videoId);
+      } else {
+        alert("URL do YouTube inválido");
+      }
+    }
+  }
+
+  function showVideoOverlay(videoId) {
+    const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${apiKey}`;
+
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.items && data.items.length > 0) {
+          const video = data.items[0].snippet;
+          const overlay = document.createElement("div");
+          overlay.className = "video-overlay";
+
+          overlay.innerHTML = `
+                    <div class="overlay-content">
+                        <button class="close-btn" onclick="closeOverlay()">×</button>
+                        <img src="${video.thumbnails.high.url}" alt="${video.title}" class="thumbnail">
+                        <h3>${video.title}</h3>
+                            <button class="download-btn" onclick="downloadVideo('${videoId}', 'true')">Baixar MP3</button>
+                            <button class="download-btn" onclick="downloadVideo('${videoId}', 'false')">Baixar MP4</button>
+                            </div>
+                        </div>
+                `;
+
+          document.body.appendChild(overlay);
+          document.body.classList.add("blurred");
+          setTimeout(() => {
+            overlay.classList.add("visible");
+          }, 10);
+        } else {
+          alert("Vídeo não encontrado");
+        }
+      })
+      .catch((error) => console.error("Error fetching data:", error));
+  }
+
+  window.closeOverlay = function () {
+    const overlay = document.querySelector(".video-overlay");
+    if (overlay) {
+      overlay.classList.remove("visible");
+      setTimeout(() => {
+        document.body.removeChild(overlay);
+        document.body.classList.remove("blurred");
+      }, 300);
+    }
+  };
   function performSearch() {
     const query = apiKeyInput.value;
     if (!query || !apiKey) return;
@@ -70,8 +131,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  function extractVideoIdFromUrl(url) {
+    const match = url.match(/[?&]v=([^&]+)/);
+    return match ? match[1] : null;
+  }
+
   window.downloadVideo = function (videoId, audio) {
-    const cobaltApiUrl = "https://api.cobalt.tools/v1/download"; // Update with the correct Cobalt API endpoint
+    const cobaltApiUrl = "https://api.cobalt.tools/api/json";
 
     fetch(cobaltApiUrl, {
       method: "POST",
