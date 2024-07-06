@@ -4,6 +4,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const updateApiKeyButton = document.getElementById("updateApiKeyButton");
   const musicButton = document.getElementById("music");
   const loadMoreButton = document.getElementById("loadMoreButton");
+  const urlInput = document.getElementById("urlInput");
+  const searchForm = document.getElementById("searchForm");
+  const urlForm = document.getElementById("urlForm");
   const audioInput = document.getElementById("audio");
 
   const playerContainer = document.getElementById("player-container");
@@ -26,14 +29,14 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Event listeners
-  document.getElementById("searchForm").addEventListener("submit", function (e) {
+  searchForm.addEventListener("submit", function (e) {
     e.preventDefault();
-    const query = apiKeyInput.value.trim();
-    if (isYouTubeUrl(query)) {
-      handleUrlInput(query);
-    } else {
-      performSearch(query);
-    }
+    performSearch();
+  });
+
+  urlForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    handleUrlInput();
   });
 
   updateApiKeyButton.addEventListener("click", () => {
@@ -46,24 +49,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
   musicButton.addEventListener("click", () => {
     isMusicOnly = true;
-    performSearch("music");
+    performSearch();
   });
 
   loadMoreButton.addEventListener("click", () => {
     if (nextPageToken) {
-      performSearch(apiKeyInput.value.trim(), nextPageToken);
+      performSearch(false, nextPageToken);
     }
   });
 
-  function performSearch(query, pageToken = "") {
+  function performSearch(isMusic = false, pageToken = "") {
+    const query = apiKeyInput.value;
     if (!apiKey) return;
 
     let url;
-    if (isMusicOnly) {
+    if (isMusic) {
       url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoCategoryId=10&maxResults=20&pageToken=${pageToken}&key=${apiKey}`;
     } else {
+      const searchQuery = query ? query : "music";
       url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(
-        query
+        searchQuery
       )}&type=video&maxResults=20&pageToken=${pageToken}&key=${apiKey}`;
     }
 
@@ -114,7 +119,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  function handleUrlInput(url) {
+  function handleUrlInput() {
+    const url = urlInput.value.trim();
     const videoId = extractVideoIdFromUrl(url);
     if (videoId) {
       showVideoOverlay(videoId);
@@ -174,12 +180,12 @@ document.addEventListener("DOMContentLoaded", () => {
       },
       body: JSON.stringify({
         url: `https://www.youtube.com/watch?v=${videoId}`,
-        isAudioOnly: audio,
+        format: audio ? "audio" : "video",
       }),
     })
       .then((response) => response.json())
       .then((data) => {
-        const downloadUrl = data.url;
+        const downloadUrl = data.download_url;
         if (downloadUrl) {
           window.open(downloadUrl, "_blank");
         } else {
@@ -203,7 +209,7 @@ document.addEventListener("DOMContentLoaded", () => {
       },
       body: JSON.stringify({
         url: `https://www.youtube.com/watch?v=${videoId}`,
-        isAudioOnly: type === "audio",
+        format: type === "audio" ? "audio" : "video",
       }),
     })
       .then((response) => response.json())
@@ -215,7 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
         }
 
-        const playbackUrl = data.url;
+        const playbackUrl = data.playback_url;
         if (playbackUrl) {
           if (type === "video") {
             videoPlayer.src = playbackUrl;
@@ -262,8 +268,4 @@ function closeWarning() {
       document.body.removeChild(overlay);
     }, 300);
   }
-}
-
-function isYouTubeUrl(url) {
-  return url.toLowerCase().includes("youtube.com");
 }
