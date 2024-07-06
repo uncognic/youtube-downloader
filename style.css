@@ -1,219 +1,422 @@
-/* Reset default margin and padding */
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
-/* Body styles */
 body {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: #1e1e2e;
-  padding-top: 42px;
-  font-family: "Poppins", sans-serif;
-  color: #cdd6f4;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #1e1e2e;
+    padding-top: 42px;
 }
 
-/* Heading styles */
-h1, .TOS {
-  margin-bottom: 40px;
-  font-weight: 700;
-  text-shadow: 1px 1px 8px rgba(0, 0, 0, 0.6);
+h1 {
+    margin-bottom: 40px;
+    color: #cdd6f4;
+    font-family: "Poppins", sans-serif;
+    font-weight: 700;
+    text-shadow: 1px 1px 8px rgba(0, 0, 0, 0.6);
 }
 
-/* Input box and animation */
 .box {
-  height: 40px;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  padding: 10px 20px;
-  background: #181825;
-  border-radius: 30px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-  position: relative;
+    height: 40px;
+    display: flex;
+    cursor: pointer;
+    padding: 10px 20px;
+    background: #181825;
+    border-radius: 30px;
+    align-items: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    position: relative;
 }
 
 .box:hover input,
 .box input:focus {
-  width: 500px;
+    width: 500px;
 }
 
 .box input {
-  width: 0;
-  color: #cdd6f4;
-  outline: none;
-  border: none;
-  font-weight: 500;
-  transition: width 0.8s ease;
-  background: transparent;
+    width: 0px;
+    color: #cdd6f4;
+    outline: none;
+    border: none;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    transition: width 0.8s ease;
+    background: transparent;
 }
 
-/* Video item container */
-.video-item {
-  position: relative;
-  width: 300px;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #1e1e2e;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-  transition: transform 0.3s ease;
+.box a .fas {
+    color: #313244;
+    font-size: 18px;
 }
+
+.results {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.video-item {
+    position: relative;
+    width: 300px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #1e1e2e;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    transition: transform 0.3s ease;
+}
+
 
 .video-item:hover {
-  transform: scale(1.05);
+    transform: scale(1.05);
 }
 
-/* Video thumbnail and hover effect */
+
 .thumbnail {
-  width: 100%;
-  height: auto;
-  display: block;
-  transition: filter 0.3s ease;
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: filter 0.3s ease;
 }
+.thumbnail-container {
+    position: relative;
+}
+
 
 .video-item:hover .thumbnail {
-  filter: blur(4px);
+    filter: blur(4px);
 }
 
-/* Video info and download buttons */
+
 .video-info {
-  padding: 10px;
+    padding: 10px;
+    color: #cdd6f4;
+    font-family: "Poppins", sans-serif;
 }
 
 .video-info h3 {
-  font-size: 16px;
-  margin-bottom: 10px;
+    font-size: 16px;
+    margin-bottom: 10px;
 }
+
 
 .download-buttons {
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 10px;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s, visibility 0.3s;
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+    z-index: 1; 
 }
+
 
 .video-item:hover .download-buttons {
-  opacity: 1;
-  visibility: visible;
+    opacity: 1;
+    visibility: visible;
 }
 
+
 .download-btn {
-  background-color: #313244;
-  border: none;
-  color: #cdd6f4;
-  font-weight: 500;
-  padding: 2px 11px;
-  border-radius: 25px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease;
+    background-color: #313244;
+    border: none;
+    color: #cdd6f4;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    padding: 2px 11px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    z-index: 10000;
 }
 
 .download-btn:hover {
-  background-color: #414558;
-  transform: scale(1.05);
+    background-color: #414558;
+    transform: scale(1.05);
 }
 
-/* Warning message styles */
-.warning {
-  position: relative;
-  background-color: #e82344;
-  color: #ffffff;
-  padding: 20px;
-  border-radius: 8px;
-  margin: 20px 0;
-  font-family: "Poppins";
-  max-width: 600px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.update-api-key-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: #313244;
+    color: #cdd6f4;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    z-index: 1000;
 }
 
-.warning p {
-  margin: 0;
-  line-height: 1.6;
+.update-api-key-btn:hover {
+    background-color: #414558;
+    transform: scale(1.05);
 }
 
-.warning a {
-  color: #0056b3;
-  text-decoration: none;
-  font-weight: bold;
+body.blurred::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    z-index: 999;
+    pointer-events: none;
 }
 
-.warning a:hover {
-  text-decoration: underline;
-}
-
-/* Buttons and interactive elements */
-.button, .warn-btn, .music-button, .update-api-key-btn, .load-more {
-  padding: 10px 20px;
-  background-color: #313244;
-  border: none;
-  color: #cdd6f4;
-  border-radius: 25px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease;
-}
-
-.button:hover, .warn-btn:hover, .music-button:hover, .update-api-key-btn:hover, .load-more:hover {
-  background-color: #414558;
-  transform: scale(1.05);
-}
-
-/* Overlay styles */
 .video-overlay {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0.9);
-  background: rgba(30, 30, 46, 0.9);
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-  color: #cdd6f4;
-  text-align: center;
-  opacity: 0;
-  transition: opacity 0.3s, transform 0.3s;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    background: rgba(30, 30, 46, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    color: #cdd6f4;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
 }
 
 .video-overlay.visible {
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
 }
 
 .overlay-content {
-  position: relative;
+    position: relative;
 }
 
 .overlay-content img {
-  max-width: 100%;
-  border-radius: 10px;
+    max-width: 100%;
+    border-radius: 10px;
 }
 
 .duration {
-  position: absolute;
-  bottom: 10px;
-  right: 5px;
-  background: rgba(0, 0, 0, 0.7);
-  color: #fff;
-  padding: 2px 5px;
-  border-radius: 5px;
-  font-size: 12px;
-  font-family: Arial, sans-serif;
+    position: absolute;
+    bottom: 10px;
+    right: 5px;
+    background: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    padding: 2px 5px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-family: Arial, sans-serif;
+    z-index: 1;
+  }
+
+.overlay-content h3 {
+    margin: 20px 0;
 }
 
-/* Miscellaneous */
-.load-more {
-  display: block;
-  width: 100%;
-  max-width: 200px;
-  margin: 20px auto;
-  text-align: center;
+.download-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+    position: relative;
 }
+
+.download-btns {
+    padding: 10px 20px;
+    background: #a6e3a1;
+    border: none;
+    border-radius: 5px;
+    color: #1e1e2e;
+    cursor: pointer;
+    transition: background 0.3s;
+    z-index: 9999;
+    position: relative;
+}
+
+.download-btns:hover {
+    background: #b4befe;
+
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #cdd6f4;
+    cursor: pointer;
+}
+
+.music-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background-color: #313244;
+    color: #cdd6f4;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    z-index: 1000;
+}
+
+.music-button:hover {
+    background-color: #414558;
+    transform: scale(1.05);
+}
+
+.load-more {
+    display: block;
+    width: 100%;
+    max-width: 200px;
+    margin: 20px auto;
+    padding: 10px;
+    background-color: #313244;
+    color: #cdd6f4;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    text-align: center;
+}
+
+.load-more:hover {
+    background-color: #414558;
+    transform: scale(1.05);
+}
+
+
+.warning {
+    position: relative;
+    background-color: #e82344;
+    border: 1px solid rgba(222, 174, 159, 0)ac;
+    color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+    font-family:  "Poppins";
+    max-width: 600px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .warning p {
+    margin: 0;
+    line-height: 1.6;
+  }
+  
+  .warning a {
+    color: #0056b3;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .warning a:hover {
+    text-decoration: underline;
+  }
+
+
+.warn-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #cdd6f4;
+    cursor: pointer;
+  }
+  
+  .warn-btn:hover {
+    color: #f5c6cb;
+  }
+
+  .TOS {
+    margin-bottom: 40px;
+    color: #cdd6f4;
+    font-family: "Poppins", sans-serif;
+    font-weight: 700;
+    text-shadow: 1px 1px 8px rgba(0, 0, 0, 0.6);
+  }
+  a.button {
+    padding: 1px 6px;
+    border: 1px outset buttonborder;
+    border-radius: 3px;
+    color: buttontext;
+    background-color: buttonface;
+    text-decoration: none;
+}
+
+
+#player-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+  
+
+  #video-player {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+
+  #audio-player {
+    width: 100%;
+    height: 100%;
+    z-index: 9999999;
+  }
+
+  #visualizer {
+    position: absolute;
+    color:#1e1e2e;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+  }
+
+  #canvisualizer {
+    position: absolute;
+    color: #1e1e2e;
+  }
+
+  p {
+    font-family: "Poppins";
+    font-weight: 700;
+    justify-content: center;
+    align-items: center;
+    color: #ffffff;
+    display: block;
+    margin-top: 20px;
+  }
+
+  .circle {
+    height: 24px;
+    width: 24px;
+    border-radius: 24px;
+    background-color: black;
+    position: fixed; 
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 99999999; /* so that it stays on top of all other elements */
+  } 
