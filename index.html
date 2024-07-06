@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Youtube Downloader</title>
     <link rel="icon" href="/favicon32.png" type="image/png" />
     <link rel="shortcut icon" href="/favicon32.png" type="image/png" />
@@ -19,15 +21,9 @@
     
     <h1>Youtube Downloader</h1>
     <form id="searchForm" class="box" style="margin-bottom: 20px;">
-        <input type="text" id="searchInput" placeholder="Search YouTube..." />
+        <input type="text" id="searchInput" placeholder="Search YouTube or Paste URL here..." />
         <button type="button" id="searchButton">
-            <i class="fas fa-search"></i>
-        </button>
-    </form>
-    <form id="urlForm" class="box">
-        <input type="text" id="urlInput" placeholder="Paste YouTube URL here..." />
-        <button type="button" id="urlButton">
-            <i class="fas fa-download"></i>
+            <i class="fas fa-search"></i> Search
         </button>
     </form>
     <div id="results" class="results"></div>
