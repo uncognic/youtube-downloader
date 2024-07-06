@@ -10,9 +10,7 @@
 </head>
 <body>
     <div class="warning">
-        <p>WARNING:<br>This project was made for personal use. We do not allow downloading copyrighted files. The projects used for this site were <a href="https://cobalt.tools/">Cobalt</a> and the YouTube API.
-        We do not save any files, this is just a link aggregator. If you have other questions, please check our <a href="terms.html">Terms of Service</a>.</p>
-    </div>>
+        <p>Downloading YouTube videos is against YouTube's terms of service. Ensure you have the necessary rights or permissions before downloading. More info can be found <a href="https://www.youtube.com/t/terms" target="_blank">here</a>.</p>
         <button class="close-warning" aria-label="Close Warning">&times;</button>
     </div>
     <div class="container">
@@ -22,20 +20,22 @@
         <div class="search-box">
             <form id="searchForm">
                 <input type="text" id="searchInput" placeholder="Search for videos" aria-label="Search for videos">
-                <a href="#" id="searchButton" aria-label="Search">
+                <button type="submit" id="searchButton" aria-label="Search">
                     <i class="fas fa-search"></i>
-                </a>
+                </button>
             </form>
             <form id="urlForm">
                 <input type="text" id="urlInput" placeholder="Paste YouTube URL here" aria-label="Paste YouTube URL here">
-                <button id="urlButton" aria-label="Download"><i class="fas fa-download"></i></button>
+                <button type="submit" id="urlButton" aria-label="Download">
+                    <i class="fas fa-download"></i>
+                </button>
             </form>
         </div>
         <div id="resultsContainer"></div>
         <button id="loadMoreButton" aria-label="Load More Results">Load More</button>
         <form id="apiKeyForm">
             <input type="text" id="apiKeyInput" placeholder="Enter your API Key" aria-label="Enter your API Key">
-            <button id="updateApiKeyButton" aria-label="Update API Key">Update API Key</button>
+            <button type="button" id="updateApiKeyButton" aria-label="Update API Key">Update API Key</button>
         </form>
         <div class="music-catalogue">
             <h2>Music Catalogue</h2>
