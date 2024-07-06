@@ -1,14 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const apiKeyInput = document.getElementById("searchInput");
-  const searchButton = document.getElementById("searchButton");
+  const inputField = document.getElementById("searchInput");
+  const actionButton = document.getElementById("actionButton");
   const resultsDiv = document.getElementById("results");
   const updateApiKeyButton = document.getElementById("updateApiKeyButton");
   const musicButton = document.getElementById("music");
   const loadMoreButton = document.getElementById("loadMoreButton");
-  const urlInput = document.getElementById("urlInput");
-  const urlButton = document.getElementById("urlButton");
   const searchForm = document.getElementById("searchForm");
-  const urlForm = document.getElementById("urlForm");
   const audioInput = document.getElementById("audio");
 
   const playerContainer = document.getElementById("player-container");
@@ -18,7 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let apiKey = localStorage.getItem("youtubeApiKey");
   let nextPageToken = "";
   let isMusicOnly = false;
-  let area;
 
   loadMoreButton.style.display = "none";
 
@@ -29,9 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  searchButton.addEventListener("click", () => performSearch());
-
-  urlButton.addEventListener("click", () => handleUrlInput());
+  actionButton.addEventListener("click", () => handleAction());
 
   updateApiKeyButton.addEventListener("click", () => {
     apiKey = prompt("Enter a new YouTube API key:");
@@ -48,12 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   searchForm.addEventListener("submit", function (e) {
     e.preventDefault();
-    performSearch();
-  });
-
-  urlForm.addEventListener("submit", function (e) {
-    e.preventDefault();
-    handleUrlInput();
+    handleAction();
   });
 
   loadMoreButton.addEventListener("click", () => {
@@ -62,15 +51,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  function handleUrlInput() {
-    const url = urlInput.value;
-    if (url) {
-      const videoId = extractVideoIdFromUrl(url);
-      if (videoId) {
-        showVideoOverlay(videoId);
-      } else {
-        alert("Invalid YouTube URL");
-      }
+  function handleAction() {
+    const query = inputField.value;
+    if (query.includes("youtube.com") || query.includes("youtu.be")) {
+      handleUrlInput(query);
+    } else {
+      performSearch();
+    }
+  }
+
+  function handleUrlInput(url) {
+    const videoId = extractVideoIdFromUrl(url);
+    if (videoId) {
+      showVideoOverlay(videoId);
+    } else {
+      alert("Invalid YouTube URL");
     }
   }
 
@@ -133,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   function performSearch(isMusic = false, pageToken = "") {
-    const query = apiKeyInput.value;
+    const query = inputField.value;
     if (!apiKey) return;
 
     let url;
