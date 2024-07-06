@@ -139,6 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       setTimeout(() => {
         document.body.removeChild(overlay);
+        localStorage.setItem("warningClosed", "true"); // Store flag in localStorage
       }, 300);
     }
   };
