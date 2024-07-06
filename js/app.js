@@ -12,20 +12,20 @@ document.addEventListener("DOMContentLoaded", () => {
   const urlForm = document.getElementById("urlForm");
   const playerContainer = document.getElementById("player-container");
 
-  let apiKey = localStorage.getItem("youtubeApiKey");
+  let youtubeApiKey = localStorage.getItem("youtubeApiKey");
   let nextPageToken = "";
   let isMusicOnly = false;
 
   // Hide load more button initially
   loadMoreButton.style.display = "none";
 
-  // Prompt for API key if not saved
-  if (!apiKey) {
-    apiKey = prompt(
+  // Prompt for YouTube API key if not saved
+  if (!youtubeApiKey) {
+    youtubeApiKey = prompt(
       "Please enter your YouTube API key (if you don't know what this is, just message me):"
     );
-    if (apiKey) {
-      localStorage.setItem("youtubeApiKey", apiKey);
+    if (youtubeApiKey) {
+      localStorage.setItem("youtubeApiKey", youtubeApiKey);
     }
   }
 
@@ -33,9 +33,9 @@ document.addEventListener("DOMContentLoaded", () => {
   searchButton.addEventListener("click", performSearch);
   urlButton.addEventListener("click", handleUrlInput);
   updateApiKeyButton.addEventListener("click", () => {
-    apiKey = prompt("Enter a new YouTube API key:");
-    if (apiKey) {
-      localStorage.setItem("youtubeApiKey", apiKey);
+    youtubeApiKey = prompt("Enter a new YouTube API key:");
+    if (youtubeApiKey) {
+      localStorage.setItem("youtubeApiKey", youtubeApiKey);
     }
   });
 
@@ -78,9 +78,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Show video overlay with video details
   function showVideoOverlay(videoId) {
-    const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${apiKey}`;
+    const youtubeUrl = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${youtubeApiKey}`;
 
-    fetch(url)
+    fetch(youtubeUrl)
       .then((response) => response.json())
       .then((data) => {
         if (data.items && data.items.length > 0) {
@@ -95,7 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
           alert("Video not found");
         }
       })
-      .catch((error) => console.error("Error fetching data:", error));
+      .catch((error) => console.error("Error fetching YouTube data:", error));
   }
 
   // Create video overlay HTML
@@ -110,8 +110,8 @@ document.addEventListener("DOMContentLoaded", () => {
         <h3>${video.title}</h3>
         <button class="download-btn" onclick="downloadVideo('${video.id}', true)">Download MP3</button>
         <button class="download-btn" onclick="downloadVideo('${video.id}', false)">Download MP4</button>
-        <button class="download-btn" onclick="viewOnline('${video.id}', 'audio')">View Online MP3</button>
-        <button class="download-btn" onclick="viewOnline('${video.id}', 'video')">View Online MP4</button>
+        <button class="view-online-btn" onclick="viewOnline('${video.id}', 'audio')">View Online MP3</button>
+        <button class="view-online-btn" onclick="viewOnline('${video.id}', 'video')">View Online MP4</button>
       </div>
     `;
 
@@ -138,11 +138,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let url;
     if (isMusicOnly) {
-      url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoCategoryId=10&maxResults=20&pageToken=${nextPageToken}&key=${apiKey}`;
+      url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoCategoryId=10&maxResults=20&pageToken=${nextPageToken}&key=${youtubeApiKey}`;
     } else {
       url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(
         query
-      )}&type=video&maxResults=20&pageToken=${nextPageToken}&key=${apiKey}`;
+      )}&type=video&maxResults=20&pageToken=${nextPageToken}&key=${youtubeApiKey}`;
     }
 
     fetch(url)
@@ -151,7 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
         nextPageToken = data.nextPageToken || "";
         const videoIds = data.items.map((item) => item.id.videoId).join(",");
         return fetch(
-          `https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${videoIds}&key=${apiKey}`
+          `https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${videoIds}&key=${youtubeApiKey}`
         );
       })
       .then((response) => response.json())
@@ -159,7 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
         displayResults(data.items);
         loadMoreButton.style.display = nextPageToken ? "block" : "none";
       })
-      .catch((error) => console.error("Error fetching data:", error));
+      .catch((error) => console.error("Error fetching YouTube data:", error));
   }
 
   // Display search results
@@ -185,8 +185,8 @@ document.addEventListener("DOMContentLoaded", () => {
           <div class="download-buttons">
             <button class="download-btn" onclick="downloadVideo('${videoId}', true)">Download MP3</button>
             <button class="download-btn" onclick="downloadVideo('${videoId}', false)">Download MP4</button>
-            <button class="download-btn" onclick="viewOnline('${videoId}', 'audio')">View Online MP3</button>
-            <button class="download-btn" onclick="viewOnline('${videoId}', 'video')">View Online MP4</button>
+            <button class="view-online-btn" onclick="viewOnline('${videoId}', 'audio')">View Online MP3</button>
+            <button class="view-online-btn" onclick="viewOnline('${videoId}', 'video')">View Online MP4</button>
           </div>
         </div>
         <div class="video-info">
@@ -203,42 +203,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const match = url.match(/[?&]v=([^&]+)/);
     return match ? match[1] : null;
   }
-
-  // Format duration from YouTube API format (PT..H..M..S)
-  function formatDuration(duration) {
-    const match = duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
-
-    const hours = match[1] ? parseInt(match[1]) : 0;
-    const minutes = match[2] ? parseInt(match[2]) : 0;
-    const seconds = match[3] ? parseInt(match[3]) : 0;
-
-    let formattedDuration = "";
-
-    if (hours > 0) {
-      formattedDuration += hours + ":";
-    }
-
-    formattedDuration +=
-      minutes.toString().padStart(2, "0") +
-      ":" +
-      seconds.toString().padStart(2, "0");
-
-    return formattedDuration;
-  }
-
-  // Download or view video/audio online
-  window.downloadVideo = function (videoId, isAudio) {
-    const format = isAudio ? "mp3" : "mp4";
-    const link = `https://www.youtube.com/watch?v=${videoId}`;
-    const container = document.getElementById("player-container");
-
-    container.innerHTML = `
-      <${isAudio ? "audio" : "video"} controls>
-        <source src="${link}" type="${isAudio ? "audio/mp3" : "video/mp4"}">
-        Your browser does not support the ${isAudio ? "audio" : "video"} element.
-      </${isAudio ? "audio" : "video"}>
-    `;
-  };
 
   // View online audio or video
   window.viewOnline = function (videoId, type) {
@@ -270,3 +234,29 @@ document.addEventListener("DOMContentLoaded", () => {
   initFromUrlParams();
 });
 
+// Format duration from YouTube API format (PT..H..M..S)
+function formatDuration(duration) {
+  const match = duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
+
+  const hours = match[1] ? parseInt(match[1], 10) : 0;
+  const minutes = match[2] ? parseInt(match[2], 10) : 0;
+  const seconds = match[3] ? parseInt(match[3], 10) : 0;
+
+  let formattedDuration = "";
+
+  if (hours > 0) {
+    formattedDuration += hours + ":";
+  }
+
+  formattedDuration +=
+    (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+
+  return formattedDuration;
+}
+
+// Download video using Cobalt API
+window.downloadVideo = function (videoId, isAudio) {
+  const format = isAudio ? "mp3" : "mp4";
+  const link = `https://cobalt.tools/api/download/${videoId}/${format}`;
+  window.open(link, "_blank");
+};
