@@ -20,4 +20,4 @@
 
 ## Terms of service
 
-### Our terms of service are available [HERE](https://scanyt.pages.dev/terms) , please take into place that downloading copyrighted content is not allowed and is wrong. You, the user, is responsible for anything you download in this website. If it's for educational purposes, please give credit to the original creator.
+### Our terms of service are available [HERE](https://scanyt.pages.dev/terms) , please take into place that downloading copyrighted content is not allowed and is wrong. You (end user) are responsible for what you download, how you use and distribute that content. please be mindful when using content of others and always credit original creators.
