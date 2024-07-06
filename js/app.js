@@ -1,3 +1,4 @@
+// Initialize variables and elements
 document.addEventListener("DOMContentLoaded", () => {
   const apiKeyInput = document.getElementById("searchInput");
   const searchButton = document.getElementById("searchButton");
@@ -10,7 +11,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const searchForm = document.getElementById("searchForm");
   const urlForm = document.getElementById("urlForm");
   const audioInput = document.getElementById("audio");
-
   const playerContainer = document.getElementById("player-container");
   const videoPlayer = document.getElementById("video-player");
   const audioPlayer = document.getElementById("audio-player");
@@ -18,36 +18,38 @@ document.addEventListener("DOMContentLoaded", () => {
   let apiKey = localStorage.getItem("youtubeApiKey");
   let nextPageToken = "";
   let isMusicOnly = false;
-  let area;
 
+  // Hide load more button initially
   loadMoreButton.style.display = "none";
 
+  // Prompt for API key if not saved
   if (!apiKey) {
     apiKey = prompt(
-      "Por favor coloque sua chave do youtube (se não saber o que é, só mande mensagem pra mim):"
+      "Please enter your YouTube API key (if you don't know what this is, just message me):"
     );
     if (apiKey) {
       localStorage.setItem("youtubeApiKey", apiKey);
     }
   }
 
+  // Event listeners for search and URL input
   searchButton.addEventListener("click", () => performSearch());
-
   urlButton.addEventListener("click", () => handleUrlInput());
-
   updateApiKeyButton.addEventListener("click", () => {
-    apiKey = prompt("Coloque uma chave nova do youtube:");
+    apiKey = prompt("Enter a new YouTube API key:");
     if (apiKey) {
       localStorage.removeItem("youtubeApiKey");
       localStorage.setItem("youtubeApiKey", apiKey);
     }
   });
 
+  // Event listener for music mode
   musicButton.addEventListener("click", () => {
     isMusicOnly = true;
     performSearch();
   });
 
+  // Prevent default form submission for search and URL input
   searchForm.addEventListener("submit", function (e) {
     e.preventDefault();
     performSearch();
@@ -58,12 +60,14 @@ document.addEventListener("DOMContentLoaded", () => {
     handleUrlInput();
   });
 
+  // Event listener for loading more results
   loadMoreButton.addEventListener("click", () => {
     if (nextPageToken) {
       performSearch(false, nextPageToken);
     }
   });
 
+  // Handle URL input to show video overlay
   function handleUrlInput() {
     const url = urlInput.value;
     if (url) {
@@ -71,11 +75,12 @@ document.addEventListener("DOMContentLoaded", () => {
       if (videoId) {
         showVideoOverlay(videoId);
       } else {
-        alert("URL do YouTube inválido");
+        alert("Invalid YouTube URL");
       }
     }
   }
 
+  // Show video overlay with video details
   function showVideoOverlay(videoId) {
     const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${apiKey}`;
 
@@ -88,16 +93,16 @@ document.addEventListener("DOMContentLoaded", () => {
           overlay.className = "video-overlay";
 
           overlay.innerHTML = `
-                <div class="overlay-content">
-                  <button class="close-btn" onclick="closeOverlay()">×</button>
-                  <img src="${video.thumbnails.high.url}" alt="${video.title}" class="thumbnail">
-                  <h3>${video.title}</h3>
-                  <button class="download-btn" onclick="downloadVideo('${videoId}', 'true')">Baixar MP3</button>
-                  <button class="download-btn" onclick="downloadVideo('${videoId}', 'false')">Baixar MP4</button>
-                  <button class="download-btn" onclick="viewOnline('${videoId}', 'audio')">Ver Online MP3</button>
-                  <button class="download-btn" onclick="viewOnline('${videoId}', 'video')">Ver Online MP4</button>
-                </div>
-              `;
+            <div class="overlay-content">
+              <button class="close-btn" onclick="closeOverlay()">×</button>
+              <img src="${video.thumbnails.high.url}" alt="${video.title}" class="thumbnail">
+              <h3>${video.title}</h3>
+              <button class="download-btn" onclick="downloadVideo('${videoId}', 'true')">Download MP3</button>
+              <button class="download-btn" onclick="downloadVideo('${videoId}', 'false')">Download MP4</button>
+              <button class="download-btn" onclick="viewOnline('${videoId}', 'audio')">View Online MP3</button>
+              <button class="download-btn" onclick="viewOnline('${videoId}', 'video')">View Online MP4</button>
+            </div>
+          `;
 
           document.body.appendChild(overlay);
           document.body.classList.add("blurred");
@@ -105,12 +110,13 @@ document.addEventListener("DOMContentLoaded", () => {
             overlay.classList.add("visible");
           }, 10);
         } else {
-          alert("Vídeo não encontrado");
+          alert("Video not found");
         }
       })
       .catch((error) => console.error("Error fetching data:", error));
   }
 
+  // Close video overlay
   window.closeOverlay = function () {
     const overlay = document.querySelector(".video-overlay");
     if (overlay) {
@@ -123,6 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  // Close warning overlay
   window.closeWarning = function () {
     const overlay = document.querySelector(".warning");
     if (overlay) {
@@ -134,6 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  // Perform YouTube search
   function performSearch(isMusic = false, pageToken = "") {
     const query = apiKeyInput.value;
     if (!apiKey) return;
@@ -165,6 +173,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .catch((error) => console.error("Error fetching data:", error));
   }
 
+  // Display search results
   function displayResults(videos) {
     resultsDiv.innerHTML = "";
 
@@ -181,107 +190,32 @@ document.addEventListener("DOMContentLoaded", () => {
       videoElement.className = "video-item";
 
       videoElement.innerHTML = `
-            <div class="thumbnail-container">
-              <img src="${thumbnailUrl}" alt="${title}" class="thumbnail">
-              <span class="duration">${videoDuration}</span>
-              <div class="download-buttons">
-                <button class="download-btn" onclick="downloadVideo('${videoId}', 'true')">Baixar MP3</button>
-                <button class="download-btn" onclick="downloadVideo('${videoId}', 'false')">Baixar MP4</button>
-                <button class="download-btn" onclick="viewOnline('${videoId}', 'audio')">Ver Online MP3</button>
-                <button class="download-btn" onclick="viewOnline('${videoId}', 'video')">Ver Online MP4</button>
-              </div>
-            </div>
-            <div class="video-info">
-              <h3>${title}</h3>
-            </div>
-          `;
+        <div class="thumbnail-container">
+          <img src="${thumbnailUrl}" alt="${title}" class="thumbnail">
+          <span class="duration">${videoDuration}</span>
+          <div class="download-buttons">
+            <button class="download-btn" onclick="downloadVideo('${videoId}', 'true')">Download MP3</button>
+            <button class="download-btn" onclick="downloadVideo('${videoId}', 'false')">Download MP4</button>
+            <button class="download-btn" onclick="viewOnline('${videoId}', 'audio')">View Online MP3</button>
+            <button class="download-btn" onclick="viewOnline('${videoId}', 'video')">View Online MP4</button>
+          </div>
+        </div>
+        <div class="video-info">
+          <h3>${title}</h3>
+        </div>
+      `;
 
       resultsDiv.appendChild(videoElement);
     });
   }
 
+  // Extract video ID from YouTube URL
   function extractVideoIdFromUrl(url) {
     const match = url.match(/[?&]v=([^&]+)/);
     return match ? match[1] : null;
   }
 
-  window.downloadVideo = function (videoId, audio) {
-    const cobaltApiUrl = "https://api.cobalt.tools/api/json";
-
-    fetch(cobaltApiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
-        url: `https://www.youtube.com/watch?v=${videoId}`,
-        isAudioOnly: audio === "true",
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        const downloadUrl = data.url;
-        if (downloadUrl) {
-          window.open(downloadUrl, "_blank");
-        } else {
-          alert("Não foi possível encontrar o link para download. Desculpe.");
-        }
-      })
-      .catch((error) => {
-        console.error("Erro:", error);
-        alert("Erro ao tentar buscar o link de download.");
-      });
-  };
-
-  window.viewOnline = function (videoId, type) {
-    const cobaltApiUrl = "https://api.cobalt.tools/api/json";
-
-    fetch(cobaltApiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
-        url: `https://www.youtube.com/watch?v=${videoId}`,
-        isAudioOnly: type === "audio",
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.status === "error") {
-          alert(
-            "Este é um vídeo ao vivo. Aguarde o término da transmissão e tente novamente."
-          );
-          return;
-        }
-
-        const downloadUrl = data.url;
-        if (downloadUrl) {
-          if (type === "video") {
-            videoPlayer.src = downloadUrl;
-            videoPlayer.style.display = "block";
-            audioPlayer.style.display = "none";
-          } else {
-            audioPlayer.crossOrigin = "anonymous";
-            audioPlayer.src = downloadUrl;
-            audioPlayer.style.display = "block";
-            videoPlayer.style.display = "none";
-            audioPlayer.load();
-            startVis(audioPlayer);
-          }
-          playerContainer.style.display = "flex";
-        } else {
-          alert("Não foi possível encontrar o link para reprodução. Desculpe.");
-        }
-      })
-      .catch((error) => {
-        console.error("Erro:", error);
-        alert("Erro ao tentar buscar o link de reprodução.");
-      });
-  };
-
+  // Initialize from URL parameters
   function initFromUrlParams() {
     const params = new URLSearchParams(window.location.search);
     const query = params.get("query");
@@ -298,6 +232,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initFromUrlParams();
 });
 
+// Format duration from YouTube API format (PT..H..M..S)
 function formatDuration(duration) {
   const match = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
 
@@ -323,137 +258,50 @@ function formatDuration(duration) {
   return "Unknown";
 }
 
-// 3d visualizer shit here
-function clearScene() {
-  const canvas = area.firstElementChild;
-  area.removeChild(canvas);
-}
+// Download or view video/audio online
+window.downloadVideo = function (videoId, audio) {
+  const type = audio === "true" ? "audio" : "video";
+  const link = `https://www.youtube.com/watch?v=${videoId}`;
+  const format = audio === "true" ? "mp3" : "mp4";
+  const quality = "highest";
+  const container = document.getElementById("player-container");
 
-function startVis(audioPlayer) {
-  const area = document.getElementById("visualizer");
-  if (!area) {
-    console.error("Element with ID 'visualizer' not found.");
-    return;
+  if (audio === "true") {
+    container.innerHTML = `
+      <audio controls>
+        <source src="${link}" type="audio/mp3">
+        Your browser does not support the audio element.
+      </audio>
+    `;
+  } else {
+    container.innerHTML = `
+      <video controls>
+        <source src="${link}" type="video/mp4">
+        Your browser does not support the video element.
+      </video>
+    `;
   }
+};
 
-  const context = new AudioContext();
-  const source = context.createMediaElementSource(audioPlayer);
-  const analyser = context.createAnalyser();
-  source.connect(analyser);
-  analyser.connect(context.destination);
-  analyser.fftSize = 512;
-  const bufferLength = analyser.frequencyBinCount;
-  const dataArray = new Uint8Array(bufferLength);
+// View online audio or video
+window.viewOnline = function (videoId, audio) {
+  const type = audio === "audio" ? "audio" : "video";
+  const link = `https://www.youtube.com/watch?v=${videoId}`;
+  const container = document.getElementById("player-container");
 
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(
-    75,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    1000
-  );
-  camera.position.z = 100;
-  scene.add(camera);
-
-  const renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setClearColor("#1e1e2e");
-
-  area.appendChild(renderer.domElement);
-
-  const geometry = new THREE.IcosahedronGeometry(20, 3);
-  const material = new THREE.MeshLambertMaterial({
-    color: "#696969",
-    wireframe: true,
-  });
-  const sphere = new THREE.Mesh(geometry, material);
-
-  const light = new THREE.DirectionalLight("#ffffff", 0.8);
-  light.position.set(0, 50, 100);
-  scene.add(light);
-  scene.add(sphere);
-
-  area.addEventListener("click", () => {
-    if (audioPlayer.paused) {
-      audioPlayer.play();
-    } else {
-      audioPlayer.pause();
-    }
-  });
-
-  window.addEventListener("resize", () => {
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-  });
-
-  function render() {
-    analyser.getByteFrequencyData(dataArray);
-
-    const lowerHalf = Array.from(dataArray.slice(0, dataArray.length / 2 - 1));
-    const upperHalf = Array.from(
-      dataArray.slice(dataArray.length / 2 - 1, dataArray.length - 1)
-    );
-
-    const lowerMax = Math.max(...lowerHalf);
-    const upperAvg = upperHalf.reduce((a, b) => a + b, 0) / upperHalf.length;
-
-    const lowerMaxFr = modulate(
-      Math.pow(lowerMax / lowerHalf.length, 0.8),
-      0,
-      1,
-      0,
-      8
-    );
-    const upperAvgFr = modulate(upperAvg / upperHalf.length, 0, 1, 0, 4);
-
-    sphere.rotation.x += 0.001;
-    sphere.rotation.y += 0.003;
-    sphere.rotation.z += 0.005;
-
-    WarpSphere(sphere, lowerMaxFr, upperAvgFr);
-    requestAnimationFrame(render);
-    renderer.render(scene, camera);
+  if (audio === "audio") {
+    container.innerHTML = `
+      <audio controls>
+        <source src="${link}" type="audio/mp3">
+        Your browser does not support the audio element.
+      </audio>
+    `;
+  } else {
+    container.innerHTML = `
+      <video controls>
+        <source src="${link}" type="video/mp4">
+        Your browser does not support the video element.
+      </video>
+    `;
   }
-
-  function WarpSphere(mesh, bassFr, treFr) {
-    let noise = new SimplexNoise();
-    mesh.geometry.vertices.forEach(function (vertex, i) {
-      var offset = mesh.geometry.parameters.radius;
-      var amp = 0.7;
-      var time = window.performance.now();
-      vertex.normalize();
-      var rf = 0.0001;
-      var distance =
-        offset +
-        bassFr +
-        noise.noise3D(
-          vertex.x + time * rf * 4,
-          vertex.y + time * rf * 6,
-          vertex.z + time * rf * 7
-        ) *
-          amp *
-          treFr *
-          2;
-      vertex.lerp(vertex.clone().multiplyScalar(distance), 1.5);
-    });
-    mesh.geometry.verticesNeedUpdate = true;
-    mesh.geometry.normalsNeedUpdate = true;
-    mesh.geometry.computeVertexNormals();
-    mesh.geometry.comput;
-  }
-  render();
-}
-
-function modulate(value, minInput, maxInput, minOutput, maxOutput) {
-  const inputRange = maxInput - minInput;
-  const outputRange = maxOutput - minOutput;
-
-  value = Math.min(Math.max(value, minInput), maxInput);
-
-  const normalizedValue = (value - minInput) / inputRange;
-
-  const outputValue = normalizedValue * outputRange + minOutput;
-
-  return outputValue;
-}
+};
