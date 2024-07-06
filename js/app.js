@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const loadMoreButton = document.getElementById("loadMoreButton");
   const urlInput = document.getElementById("urlInput");
   const searchForm = document.getElementById("searchForm");
-  const urlForm = document.getElementById("urlForm");
+  const urlForm = document.getElementById("urlForm"); // Ensure this exists in your HTML
   const audioInput = document.getElementById("audio");
 
   const playerContainer = document.getElementById("player-container");
@@ -34,10 +34,12 @@ document.addEventListener("DOMContentLoaded", () => {
     performSearch();
   });
 
-  urlForm.addEventListener("submit", function (e) {
-    e.preventDefault();
-    handleUrlInput();
-  });
+  if (urlForm) { // Check if urlForm exists before adding event listener
+    urlForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      handleUrlInput();
+    });
+  }
 
   updateApiKeyButton.addEventListener("click", () => {
     apiKey = prompt("Enter a new YouTube API key:");
