@@ -1,62 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>YouTube Downloader</title>
-    <!-- Favicon for the website -->
+    <title>Youtube Downloader</title>
     <link rel="icon" href="/favicon32.png" type="image/png" />
     <link rel="shortcut icon" href="/favicon32.png" type="image/png" />
-    <!-- Linking the stylesheet -->
     <link id="theme-style" rel="stylesheet" href="style.css" />
-    <!-- FontAwesome for icons -->
     <script src="https://kit.fontawesome.com/5f0cb4421d.js" crossorigin="anonymous"></script>
-    <!-- Preconnect to Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Google Fonts for custom font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
 </head>
 <body id="content">
-    <!-- Warning message for users -->
     <div class="warning">
         <button class="warn-btn" onclick="closeWarning()">×</button>
-        <p>WARNING:<br> You (end user) are responsible for what you download, how you use and distribute that content. please be mindful when using content of others and always credit original creators. The projects used for this site were <a href="https://cobalt.tools/">Cobalt</a> and the YouTube API. 
-        We do not save any files, this is just a link aggregator. If you have any other questions,<br> check our <a href="terms.html">Terms of Service</a>.</p>
+        <p>WARNING:<br>This project was made for personal use. We do not allow downloading copyrighted files. The projects used for this site were <a href="https://cobalt.tools/">Cobalt</a> and the YouTube API.
+        We do not store any files, this is just a link aggregator. If you have any questions, check out our <a href="terms.html">Terms of Service</a>.</p>
     </div>
     
-    <!-- Main title of the website -->
-    <h1>YouTube Downloader Enhanced</h1>
-    
-    <!-- Search form for YouTube videos -->
+    <h1>Youtube Downloader</h1>
     <form id="searchForm" class="box" style="margin-bottom: 20px;">
         <input type="text" id="searchInput" placeholder="Search YouTube..." />
-        <button id="searchButton" type="submit">
+        <button type="button" id="searchButton">
             <i class="fas fa-search"></i>
         </button>
     </form>
-    
-    <!-- Form to input a YouTube URL for downloading -->
     <form id="urlForm" class="box">
-        <input type="text" id="urlInput" placeholder="Enter YouTube URL here..." />
-        <button id="urlButton" type="submit">
+        <input type="text" id="urlInput" placeholder="Paste YouTube URL here..." />
+        <button type="button" id="urlButton">
             <i class="fas fa-download"></i>
         </button>
     </form>
-    
-    <!-- Container to display search results -->
     <div id="results" class="results"></div>
-    
-    <!-- Button to load more results -->
     <button id="loadMoreButton" class="load-more">Load More</button>
-    <!-- Button to update the YouTube API key -->
     <button id="updateApiKeyButton" class="update-api-key-btn">Update YouTube API Key</button>
-    
-    <!-- Catalogue section for music -->
     <div class="catalogue">
         <button id="music" class="music-button">Music</button>
     </div>
-    
-    <!-- Player container for audio and video playback -->
     <div id="player-container">
         <div id="visualizer">
             <audio id="audio-player" controls></audio>
@@ -65,8 +44,6 @@
         </div>
         <video id="video-player" controls></video>
     </div>
-    
-    <!-- JavaScript files for functionality and effects -->
     <script src="js/app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/102/three.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.3.0/simplex-noise.min.js"></script>
