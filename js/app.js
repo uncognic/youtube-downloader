@@ -180,12 +180,12 @@ document.addEventListener("DOMContentLoaded", () => {
       },
       body: JSON.stringify({
         url: `https://www.youtube.com/watch?v=${videoId}`,
-        format: audio ? "audio" : "video",
+        isAudioOnly: audio,
       }),
     })
       .then((response) => response.json())
       .then((data) => {
-        const downloadUrl = data.download_url;
+        const downloadUrl = data.url;
         if (downloadUrl) {
           window.open(downloadUrl, "_blank");
         } else {
@@ -209,7 +209,7 @@ document.addEventListener("DOMContentLoaded", () => {
       },
       body: JSON.stringify({
         url: `https://www.youtube.com/watch?v=${videoId}`,
-        format: type === "audio" ? "audio" : "video",
+        isAudioOnly: type === "audio",
       }),
     })
       .then((response) => response.json())
@@ -221,7 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
         }
 
-        const playbackUrl = data.playback_url;
+        const playbackUrl = data.url;
         if (playbackUrl) {
           if (type === "video") {
             videoPlayer.src = playbackUrl;
