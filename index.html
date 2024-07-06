@@ -69,22 +69,16 @@
         function handleSearchOrUrlInput() {
             const input = document.getElementById("searchInput").value.trim();
             if (input.includes("youtube.com")) {
-                showVideoOverlay(extractVideoIdFromUrl(input));
+                showDownloadOptions(input);
             } else {
                 performSearch();
             }
         }
 
-        // Function to extract video ID from YouTube URL
-        function extractVideoIdFromUrl(url) {
-            const match = url.match(/[?&]v=([^&]+)/);
-            return match ? match[1] : null;
-        }
-
-        // Function to show video overlay
-        function showVideoOverlay(videoId) {
-            // Implement your video overlay logic here
-            alert("Video overlay logic here for video ID: " + videoId);
+        // Function to show download options for a YouTube video
+        function showDownloadOptions(url) {
+            // Replace this alert with your logic to show download options
+            alert("Show download options for: " + url);
         }
 
         // Function to perform search
