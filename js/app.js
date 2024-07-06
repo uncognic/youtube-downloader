@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const urlButton = document.getElementById("urlButton");
   const searchForm = document.getElementById("searchForm");
   const urlForm = document.getElementById("urlForm");
-  const audioInput = document.getElementById("audio");
+  const audioInput = document.getElementById("audioInput"); // Corrected ID here
 
   const playerContainer = document.getElementById("player-container");
   const videoPlayer = document.getElementById("video-player");
@@ -19,59 +19,63 @@ document.addEventListener("DOMContentLoaded", () => {
   let nextPageToken = "";
   let isMusicOnly = false;
 
+  loadMoreButton.style.display = "none";
+
   if (!apiKey) {
-    apiKey = prompt("Please enter your YouTube API key:");
+    apiKey = prompt(
+      "Please enter your YouTube API key (if you don't have one, please contact me):"
+    );
     if (apiKey) {
       localStorage.setItem("youtubeApiKey", apiKey);
     }
   }
 
-  if (searchButton) {
-    searchButton.addEventListener("click", () => performSearch());
-  }
+  searchButton.addEventListener("click", () => performSearch());
 
-  if (urlButton) {
-    urlButton.addEventListener("click", () => handleUrlInput());
-  }
+  urlButton.addEventListener("click", () => handleUrlInput());
 
-  if (updateApiKeyButton) {
-    updateApiKeyButton.addEventListener("click", () => {
-      apiKey = prompt("Enter a new YouTube API key:");
-      if (apiKey) {
-        localStorage.removeItem("youtubeApiKey");
-        localStorage.setItem("youtubeApiKey", apiKey);
-      }
-    });
-  }
+  updateApiKeyButton.addEventListener("click", () => {
+    apiKey = prompt("Enter a new YouTube API key:");
+    if (apiKey) {
+      localStorage.removeItem("youtubeApiKey");
+      localStorage.setItem("youtubeApiKey", apiKey);
+    }
+  });
 
-  if (musicButton) {
-    musicButton.addEventListener("click", () => {
-      isMusicOnly = true;
-      performSearch();
-    });
-  }
+  musicButton.addEventListener("click", () => {
+    isMusicOnly = true;
+    performSearch();
+  });
 
-  if (searchForm) {
-    searchForm.addEventListener("submit", function (e) {
-      e.preventDefault();
-      performSearch();
-    });
-  }
+  searchForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    performSearch();
+  });
 
-  if (urlForm) {
-    urlForm.addEventListener("submit", function (e) {
-      e.preventDefault();
-      handleUrlInput();
-    });
-  }
+  urlForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    handleUrlInput();
+  });
 
-  if (loadMoreButton) {
-    loadMoreButton.addEventListener("click", () => {
-      if (nextPageToken) {
-        performSearch(false, nextPageToken);
-      }
-    });
-  }
+  loadMoreButton.addEventListener("click", () => {
+    if (nextPageToken) {
+      performSearch(false, nextPageToken);
+    }
+  });
+
+  audioInput.addEventListener("change", function () {
+    const file = this.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        audioPlayer.src = e.target.result;
+        playerContainer.style.display = "flex";
+        videoPlayer.style.display = "none";
+        audioPlayer.play();
+      };
+      reader.readAsDataURL(file);
+    }
+  });
 
   function handleUrlInput() {
     const url = urlInput.value;
@@ -97,16 +101,16 @@ document.addEventListener("DOMContentLoaded", () => {
           overlay.className = "video-overlay";
 
           overlay.innerHTML = `
-            <div class="overlay-content">
-              <button class="close-btn" onclick="closeOverlay()">×</button>
-              <img src="${video.thumbnails.high.url}" alt="${video.title}" class="thumbnail">
-              <h3>${video.title}</h3>
-              <button class="download-btn" onclick="downloadVideo('${videoId}', 'true')">Download MP3</button>
-              <button class="download-btn" onclick="downloadVideo('${videoId}', 'false')">Download MP4</button>
-              <button class="download-btn" onclick="viewOnline('${videoId}', 'audio')">Watch Online MP3</button>
-              <button class="download-btn" onclick="viewOnline('${videoId}', 'video')">Watch Online MP4</button>
-            </div>
-          `;
+                <div class="overlay-content">
+                  <button class="close-btn" onclick="closeOverlay()">×</button>
+                  <img src="${video.thumbnails.high.url}" alt="${video.title}" class="thumbnail">
+                  <h3>${video.title}</h3>
+                  <button class="download-btn" onclick="downloadVideo('${videoId}', 'true')">Download MP3</button>
+                  <button class="download-btn" onclick="downloadVideo('${videoId}', 'false')">Download MP4</button>
+                  <button class="download-btn" onclick="viewOnline('${videoId}', 'audio')">Watch Online MP3</button>
+                  <button class="download-btn" onclick="viewOnline('${videoId}', 'video')">Watch Online MP4</button>
+                </div>
+              `;
 
           document.body.appendChild(overlay);
           document.body.classList.add("blurred");
@@ -190,20 +194,20 @@ document.addEventListener("DOMContentLoaded", () => {
       videoElement.className = "video-item";
 
       videoElement.innerHTML = `
-        <div class="thumbnail-container">
-          <img src="${thumbnailUrl}" alt="${title}" class="thumbnail">
-          <span class="duration">${videoDuration}</span>
-          <div class="download-buttons">
-            <button class="download-btn" onclick="downloadVideo('${videoId}', 'true')">Download MP3</button>
-            <button class="download-btn" onclick="downloadVideo('${videoId}', 'false')">Download MP4</button>
-            <button class="download-btn" onclick="viewOnline('${videoId}', 'audio')">Watch Online MP3</button>
-            <button class="download-btn" onclick="viewOnline('${videoId}', 'video')">Watch Online MP4</button>
-          </div>
-        </div>
-        <div class="video-info">
-          <h3>${title}</h3>
-        </div>
-      `;
+            <div class="thumbnail-container">
+              <img src="${thumbnailUrl}" alt="${title}" class="thumbnail">
+              <span class="duration">${videoDuration}</span>
+              <div class="download-buttons">
+                <button class="download-btn" onclick="downloadVideo('${videoId}', 'true')">Download MP3</button>
+                <button class="download-btn" onclick="downloadVideo('${videoId}', 'false')">Download MP4</button>
+                <button class="download-btn" onclick="viewOnline('${videoId}', 'audio')">Watch Online MP3</button>
+                <button class="download-btn" onclick="viewOnline('${videoId}', 'video')">Watch Online MP4</button>
+              </div>
+            </div>
+            <div class="video-info">
+              <h3>${title}</h3>
+            </div>
+          `;
 
       resultsDiv.appendChild(videoElement);
     });
@@ -234,12 +238,12 @@ document.addEventListener("DOMContentLoaded", () => {
         if (downloadUrl) {
           window.open(downloadUrl, "_blank");
         } else {
-          alert("Failed to find download link. Sorry.");
+          alert("Unable to find download link. Sorry.");
         }
       })
       .catch((error) => {
         console.error("Error:", error);
-        alert("Error trying to fetch download link.");
+        alert("Error fetching download link.");
       });
   };
 
@@ -259,42 +263,35 @@ document.addEventListener("DOMContentLoaded", () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        const onlineUrl = data.url;
-        if (onlineUrl) {
+        if (data.status === "error") {
+          alert(
+            "This is a live video. Please wait for the broadcast to end and try again."
+          );
+          return;
+        }
+
+        const downloadUrl = data.url;
+        if (downloadUrl) {
           if (type === "audio") {
-            audioPlayer.src = onlineUrl;
-            playerContainer.style.display = "block";
+            audioPlayer.src = downloadUrl;
+            playerContainer.style.display = "flex";
             videoPlayer.style.display = "none";
             audioPlayer.play();
           } else {
-            videoPlayer.src = onlineUrl;
-            playerContainer.style.display = "block";
-            audioPlayer.style.display = "none";
-            videoPlayer.play();
+            videoPlayer.src = downloadUrl;
+            videoPlayer.style.display = "block";
+            playerContainer.style.display = "flex";
+            audioPlayer.pause();
           }
         } else {
-          alert("Failed to find online view link. Sorry.");
+          alert("Unable to find online view link. Sorry.");
         }
       })
       .catch((error) => {
         console.error("Error:", error);
-        alert("Error trying to fetch online view link.");
+        alert("Error fetching online view link.");
       });
   };
-
-  audioInput.addEventListener("change", function () {
-    const file = this.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        audioPlayer.src = e.target.result;
-        playerContainer.style.display = "block";
-        videoPlayer.style.display = "none";
-        audioPlayer.play();
-      };
-      reader.readAsDataURL(file);
-    }
-  });
 
   function formatDuration(duration) {
     const match = duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
@@ -303,25 +300,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const minutes = parseInt(match[2]) || 0;
     const seconds = parseInt(match[3]) || 0;
 
-    let formattedDuration = "";
+    const formattedDuration = [];
 
     if (hours > 0) {
-      formattedDuration += `${hours}:`;
+      formattedDuration.push(`${hours}h`);
     }
 
-    if (minutes < 10) {
-      formattedDuration += `0${minutes}:`;
-    } else {
-      formattedDuration += `${minutes}:`;
+    if (minutes > 0) {
+      formattedDuration.push(`${minutes}m`);
     }
 
-    if (seconds < 10) {
-      formattedDuration += `0${seconds}`;
-    } else {
-      formattedDuration += `${seconds}`;
+    if (seconds > 0) {
+      formattedDuration.push(`${seconds}s`);
     }
 
-    return formattedDuration;
+    return formattedDuration.join(" ");
   }
-
 });
