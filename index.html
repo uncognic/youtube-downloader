@@ -1,139 +1,55 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Video Downloader</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        #resultsDiv {
-            margin-top: 20px;
-        }
-        #resultsDiv ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        #resultsDiv li {
-            margin-bottom: 10px;
-        }
-        #resultsDiv a {
-            text-decoration: none;
-            color: #337ab7;
-        }
-        #resultsDiv a:hover {
-            color: #23527c;
-        }
-    </style>
+    <title>Youtube Downloader</title>
+    <link rel="icon" href="/favicon32.png" type="image/png" />
+    <link rel="shortcut icon" href="/favicon32.png" type="image/png" />
+    <link id="theme-style" rel="stylesheet" href="style.css" />
+    <script src="https://kit.fontawesome.com/5f0cb4421d.js" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
 </head>
-<body>
-    <h1>YouTube Video Downloader</h1>
-    <input id="apiKeyInput" type="text" placeholder="Enter your YouTube API key">
-    <button id="saveApiKeyButton">Save API Key</button>
-    <input id="youtubeInput" type="text" placeholder="Search YouTube or enter a YouTube link">
-    <button id="searchOrDownloadButton">Search or Download</button>
-    <div id="resultsDiv"></div>
-
-    <script>
-        const apiKeyInput = document.getElementById('apiKeyInput');
-        const saveApiKeyButton = document.getElementById('saveApiKeyButton');
-        const youtubeInput = document.getElementById('youtubeInput');
-        const searchOrDownloadButton = document.getElementById('searchOrDownloadButton');
-        const resultsDiv = document.getElementById('resultsDiv');
-
-        let apiKey = '';
-
-        function validateApiKey(apiKey) {
-            const regex = /^[A-Za-z0-9-_]{39}$/;
-            return regex.test(apiKey);
-        }
-
-        saveApiKeyButton.addEventListener('click', () => {
-            const apiKeyValue = apiKeyInput.value.trim();
-            if (!validateApiKey(apiKeyValue)) {
-                alert('Invalid API key format. Please enter a valid API key.');
-                return;
-            }
-            apiKey = apiKeyValue;
-            localStorage.setItem('apiKey', apiKey);
-            alert('API key saved!');
-        });
-
-        searchOrDownloadButton.addEventListener('click', () => {
-            if (!apiKey) {
-                alert('Please enter and save your API key first!');
-                return;
-            }
-
-            const userInput = youtubeInput.value.trim();
-
-            if (userInput.startsWith('https://www.youtube.com/watch?v=')) {
-                // User entered a YouTube link
-                const videoId = extractVideoIdFromUrl(userInput);
-                downloadVideo(videoId, false); // Download video in MP4 format
-            } else {
-                // User entered a search query
-                performSearch(userInput);
-            }
-        });
-
-        function performSearch(query) {
-            try {
-                const apiUrl = `https://www.googleapis.com/youtube/v3/search?part=id,snippet&q=${query}&key=${apiKey}`;
-                fetch(apiUrl)
-                  .then(response => response.json())
-                  .then(data => {
-                        const results = data.items;
-                        const resultsHtml = results.map(result => {
-                            return `<li><a href="https://www.youtube.com/watch?v=${result.id.videoId}" target="_blank">${result.snippet.title}</a></li>`;
-                        }).join('');
-                        resultsDiv.innerHTML = `<ul>${resultsHtml}</ul>`;
-                  })
-                  .catch(error => {
-                        console.error(error);
-                        alert('Error searching for videos: ' + error.message);
-                  });
-            } catch (error) {
-                console.error(error);
-                alert('Error searching for videos: ' + error.message);
-            }
-        }
-
-        function downloadVideo(videoId, audioOnly) {
-            try {
-                const apiUrl = `https://cobalt.io/api/download?url=https://www.youtube.com/watch?v=${videoId}&format=mp4`;
-                fetch(apiUrl)
-                  .then(response => response.json())
-                  .then(data => {
-                        const downloadUrl = data.download_url;
-                        const a = document.createElement('a');
-                        a.href = downloadUrl;
-                        a.download = `${videoId}.mp4`;
-                        a.click();
-                  })
-                  .catch(error => {
-                        console.error(error);
-                        alert('Error downloading video: ' + error.message);
-                  });
-            } catch (error) {
-                console.error(error);
-                alert('Error downloading video: ' + error.message);
-            }
-        }
-
-        function extractVideoIdFromUrl(url) {
-            const regex = /^https:\/\/www\.youtube\.com\/watch\?v=([^&]+)/;
-            const match = url.match(regex);
-            return match[1];
-        }
-
-        // Retrieve saved API key from local storage
-        apiKey = localStorage.getItem('apiKey');
-        if (apiKey) {
-            apiKeyInput.value = apiKey;
-        }
-    </script>
+<body id="content">
+    <div class="warning">
+        <button class="warn-btn" onclick="closeWarning()">×</button>
+        <p>AVISO:<br>Esse projeto foi feito para usos pessoais. Nós não permitimos pessoas baixarem arquivos com copyright. Os projetos usados para esse site foram <a href="https://cobalt.tools/">Cobalt</a> e a API do youtube.
+        Nós não salvamos nenhum arquivo, isso só é um agregador de links. Se tiver outras perguntas,<br> olhe nosso <a href="termos.html">Termos e serviços</a>.</p>
+    </div>
+    
+    <h1>Youtube Downloader</h1>
+    <form id="searchForm" class="box" style="margin-bottom: 20px;">
+        <input type="text" id="searchInput" placeholder="Pesquisar Youtube..." />
+        <a href="#" id="searchButton">
+            <i class="fas fa-search"></i>
+        </a>
+    </form>
+    <form id="urlForm" class="box">
+        <input type="text" id="urlInput" placeholder="Coloque a URL do YouTube aqui..." />
+        <a href="#" id="urlButton">
+            <i class="fas fa-download"></i>
+        </a>
+    </form>
+    <div id="results" class="results"></div>
+    <button id="loadMoreButton" class="load-more">Carregar Mais</button>
+    <button id="updateApiKeyButton" class="update-api-key-btn">Atualizar chave do youtube</button>
+    <div class="catalogue">
+        <button id="music" class="music-button">Músicas</button>
+    </div>
+    <div id="player-container">
+        <div id="visualizer">
+            <audio id="audio-player" controls></audio>
+            <div id="canvisualizer" width="1214" height="951"></div>
+            <p>Clique na tela para começar a música, e clique denovo para pausar</p>
+        </div>
+        <video id="video-player" controls></video>
+      </div>
+      <!-- this is for the cursor effect, please ignore -->
+    
+    <script src="js/app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/102/three.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.3.0/simplex-noise.min.js"></script>
+    <script src="js/effects.js"></script>
+</div>
 </body>
 </html>
