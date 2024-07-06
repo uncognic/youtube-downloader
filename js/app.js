@@ -23,9 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
   loadMoreButton.style.display = "none";
 
   if (!apiKey) {
-    apiKey = prompt(
-      "Please enter your YouTube API key (if you don't know what this is, just message me):"
-    );
+    apiKey = prompt("Please enter your YouTube API key (if you don't know what this is, just contact me):");
     if (apiKey) {
       localStorage.setItem("youtubeApiKey", apiKey);
     }
@@ -77,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function showVideoOverlay(videoId) {
-    const url = https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${apiKey};
+    const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${apiKey}`;
 
     fetch(url)
       .then((response) => response.json())
@@ -87,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const overlay = document.createElement("div");
           overlay.className = "video-overlay";
 
-          overlay.innerHTML = 
+          overlay.innerHTML = `
                 <div class="overlay-content">
                   <button class="close-btn" onclick="closeOverlay()">×</button>
                   <img src="${video.thumbnails.high.url}" alt="${video.title}" class="thumbnail">
@@ -97,7 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   <button class="download-btn" onclick="viewOnline('${videoId}', 'audio')">View Online MP3</button>
                   <button class="download-btn" onclick="viewOnline('${videoId}', 'video')">View Online MP4</button>
                 </div>
-              ;
+              `;
 
           document.body.appendChild(overlay);
           document.body.classList.add("blurred");
@@ -140,12 +138,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let url;
     if (isMusic) {
-      url = https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoCategoryId=10&maxResults=20&pageToken=${pageToken}&key=${apiKey};
+      url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoCategoryId=10&maxResults=20&pageToken=${pageToken}&key=${apiKey}`;
     } else {
       const searchQuery = query ? query : "music";
-      url = https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(
+      url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(
         searchQuery
-      )}&type=video&maxResults=20&pageToken=${pageToken}&key=${apiKey};
+      )}&type=video&maxResults=20&pageToken=${pageToken}&key=${apiKey}`;
     }
 
     fetch(url)
@@ -154,7 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
         nextPageToken = data.nextPageToken || "";
         const videoIds = data.items.map((item) => item.id.videoId).join(",");
         return fetch(
-          https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${videoIds}&key=${apiKey}
+          `https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${videoIds}&key=${apiKey}`
         );
       })
       .then((response) => response.json())
@@ -180,7 +178,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const videoElement = document.createElement("div");
       videoElement.className = "video-item";
 
-      videoElement.innerHTML = 
+      videoElement.innerHTML = `
             <div class="thumbnail-container">
               <img src="${thumbnailUrl}" alt="${title}" class="thumbnail">
               <span class="duration">${videoDuration}</span>
@@ -194,7 +192,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="video-info">
               <h3>${title}</h3>
             </div>
-          ;
+          `;
 
       resultsDiv.appendChild(videoElement);
     });
@@ -215,7 +213,7 @@ document.addEventListener("DOMContentLoaded", () => {
         Accept: "application/json",
       },
       body: JSON.stringify({
-        url: https://www.youtube.com/watch?v=${videoId},
+        url: `https://www.youtube.com/watch?v=${videoId}`,
         isAudioOnly: audio === "true",
       }),
     })
@@ -225,12 +223,12 @@ document.addEventListener("DOMContentLoaded", () => {
         if (downloadUrl) {
           window.open(downloadUrl, "_blank");
         } else {
-          alert("Could not find download link. Sorry.");
+          alert("Unable to find the download link. Sorry.");
         }
       })
       .catch((error) => {
         console.error("Error:", error);
-        alert("Error fetching download link.");
+        alert("Error trying to fetch the download link.");
       });
   };
 
@@ -244,7 +242,7 @@ document.addEventListener("DOMContentLoaded", () => {
         Accept: "application/json",
       },
       body: JSON.stringify({
-        url: https://www.youtube.com/watch?v=${videoId},
+        url: `https://www.youtube.com/watch?v=${videoId}`,
         isAudioOnly: type === "audio",
       }),
     })
@@ -252,208 +250,76 @@ document.addEventListener("DOMContentLoaded", () => {
       .then((data) => {
         if (data.status === "error") {
           alert(
-            "This is a live video. Please wait for the broadcast to end and try again."
+            "This is a live video. Please wait for the transmission to end and try again."
           );
           return;
         }
 
         const downloadUrl = data.url;
         if (downloadUrl) {
-          if (type === "video") {
-            videoPlayer.src = downloadUrl;
-            videoPlayer.style.display = "block";
-            audioPlayer.style.display = "none";
+          if (type === "audio") {
+            showAudioPlayer(downloadUrl);
           } else {
-            audioPlayer.crossOrigin = "anonymous";
-            audioPlayer.src = downloadUrl;
-            audioPlayer.style.display = "block";
-            videoPlayer.style.display = "none";
-            audioPlayer.load();
-            startVis(audioPlayer);
+            showVideoPlayer(downloadUrl);
           }
-          playerContainer.style.display = "flex";
         } else {
-          alert("Could not find playback link. Sorry.");
+          alert("Unable to find the playback link. Sorry.");
         }
       })
       .catch((error) => {
         console.error("Error:", error);
-        alert("Error fetching playback link.");
+        alert("Error trying to fetch the playback link.");
       });
   };
 
-  function initFromUrlParams() {
-    const params = new URLSearchParams(window.location.search);
-    const query = params.get("query");
-    const musicOnly = params.get("musicOnly") === "true";
-
-    if (query) {
-      apiKeyInput.value = query;
-    }
-
-    isMusicOnly = musicOnly;
-    performSearch(isMusicOnly);
+  function showAudioPlayer(url) {
+    audioPlayer.src = url;
+    audioPlayer.style.display = "block";
+    videoPlayer.style.display = "none";
+    playerContainer.style.display = "block";
+    audioPlayer.play();
   }
 
-  initFromUrlParams();
-});
+  function showVideoPlayer(url) {
+    videoPlayer.src = url;
+    videoPlayer.style.display = "block";
+    audioPlayer.style.display = "none";
+    playerContainer.style.display = "block";
+    videoPlayer.play();
+  }
 
-function formatDuration(duration) {
-  const match = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+  function formatDuration(duration) {
+    const match = duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
 
-  if (match) {
     const hours = match[1] ? parseInt(match[1]) : 0;
     const minutes = match[2] ? parseInt(match[2]) : 0;
     const seconds = match[3] ? parseInt(match[3]) : 0;
 
-    let formattedDuration = "";
+    const formatted = [
+      hours ? String(hours).padStart(2, "0") : "00",
+      String(minutes).padStart(2, "0"),
+      String(seconds).padStart(2, "0"),
+    ].join(":");
 
-    if (hours > 0) {
-      formattedDuration += hours + ":";
-    }
-
-    formattedDuration +=
-      minutes.toString().padStart(2, "0") +
-      ":" +
-      seconds.toString().padStart(2, "0");
-
-    return formattedDuration;
+    return formatted;
   }
 
-  return "Unknown";
-}
+  function showWarning() {
+    const overlay = document.createElement("div");
+    overlay.className = "warning";
 
-// 3d visualizer code here
-function clearScene() {
-  const canvas = area.firstElementChild;
-  area.removeChild(canvas);
-}
+    overlay.innerHTML = `
+        <div class="warning-content">
+          <button class="close-btn" onclick="closeWarning()">×</button>
+          <p>Download at your own risk. Please be mindful of copyright laws and YouTube's terms of service. This website is not responsible for any misuse of the downloaded content. This is for educational purposes only.</p>
+        </div>
+      `;
 
-function startVis(audioPlayer) {
-  const area = document.getElementById("visualizer");
-  if (!area) {
-    console.error("Element with ID 'visualizer' not found.");
-    return;
+    document.body.appendChild(overlay);
+    setTimeout(() => {
+      overlay.classList.add("visible");
+    }, 10);
   }
 
-  const context = new AudioContext();
-  const source = context.createMediaElementSource(audioPlayer);
-  const analyser = context.createAnalyser();
-  source.connect(analyser);
-  analyser.connect(context.destination);
-  analyser.fftSize = 512;
-  const bufferLength = analyser.frequencyBinCount;
-  const dataArray = new Uint8Array(bufferLength);
-
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(
-    75,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    1000
-  );
-  camera.position.z = 100;
-  scene.add(camera);
-
-  const renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setClearColor("#1e1e2e");
-
-  area.appendChild(renderer.domElement);
-
-  const geometry = new THREE.IcosahedronGeometry(20, 3);
-  const material = new THREE.MeshLambertMaterial({
-    color: "#696969",
-    wireframe: true,
-  });
-  const sphere = new THREE.Mesh(geometry, material);
-
-  const light = new THREE.DirectionalLight("#ffffff", 0.8);
-  light.position.set(0, 50, 100);
-  scene.add(light);
-  scene.add(sphere);
-
-  area.addEventListener("click", () => {
-    if (audioPlayer.paused) {
-      audioPlayer.play();
-    } else {
-      audioPlayer.pause();
-    }
-  });
-
-  window.addEventListener("resize", () => {
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-  });
-
-  function render() {
-    analyser.getByteFrequencyData(dataArray);
-
-    const lowerHalf = Array.from(dataArray.slice(0, dataArray.length / 2 - 1));
-    const upperHalf = Array.from(
-      dataArray.slice(dataArray.length / 2 - 1, dataArray.length - 1)
-    );
-
-    const lowerMax = Math.max(...lowerHalf);
-    const upperAvg = upperHalf.reduce((a, b) => a + b, 0) / upperHalf.length;
-
-    const lowerMaxFr = modulate(
-      Math.pow(lowerMax / lowerHalf.length, 0.8),
-      0,
-      1,
-      0,
-      8
-    );
-    const upperAvgFr = modulate(upperAvg / upperHalf.length, 0, 1, 0, 4);
-
-    sphere.rotation.x += 0.001;
-    sphere.rotation.y += 0.003;
-    sphere.rotation.z += 0.005;
-
-    WarpSphere(sphere, lowerMaxFr, upperAvgFr);
-    requestAnimationFrame(render);
-    renderer.render(scene, camera);
-  }
-
-  function WarpSphere(mesh, bassFr, treFr) {
-    let noise = new SimplexNoise();
-    mesh.geometry.vertices.forEach(function (vertex, i) {
-      var offset = mesh.geometry.parameters.radius;
-      var amp = 0.7;
-      var time = window.performance.now();
-      vertex.normalize();
-      var rf = 0.0001;
-      var distance =
-        offset +
-        bassFr +
-        noise.noise3D(
-          vertex.x + time * rf * 4,
-          vertex.y + time * rf * 6,
-          vertex.z + time * rf * 7
-        ) *
-          amp *
-          treFr *
-          2;
-      vertex.lerp(vertex.clone().multiplyScalar(distance), 1.5);
-    });
-    mesh.geometry.verticesNeedUpdate = true;
-    mesh.geometry.normalsNeedUpdate = true;
-    mesh.geometry.computeVertexNormals();
-    mesh.geometry.comput;
-  }
-  render();
-}
-
-function modulate(value, minInput, maxInput, minOutput, maxOutput) {
-  const inputRange = maxInput - minInput;
-  const outputRange = maxOutput - minOutput;
-
-  value = Math.min(Math.max(value, minInput), maxInput);
-
-  const normalizedValue = (value - minInput) / inputRange;
-
-  const outputValue = normalizedValue * outputRange + minOutput;
-
-  return outputValue;
-} 
+  showWarning();
+});
