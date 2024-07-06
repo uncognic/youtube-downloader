@@ -27,19 +27,11 @@
     <!-- Main title of the website -->
     <h1>YouTube Downloader Enhanced</h1>
     
-    <!-- Search form for YouTube videos -->
+    <!-- Combined search and URL input form -->
     <form id="searchForm" class="box" style="margin-bottom: 20px;">
-        <input type="text" id="searchInput" placeholder="Search YouTube..." />
-        <a href="#" id="searchButton">
+        <input type="text" id="searchInput" placeholder="Search YouTube or enter URL..." />
+        <a href="#" id="searchUrlButton" onclick="handleSearchOrUrlInput()">
             <i class="fas fa-search"></i>
-        </a>
-    </form>
-    
-    <!-- Form to input a YouTube URL for downloading -->
-    <form id="urlForm" class="box">
-        <input type="text" id="urlInput" placeholder="Enter YouTube URL here..." />
-        <a href="#" id="urlButton">
-            <i class="fas fa-download"></i>
         </a>
     </form>
     
@@ -71,5 +63,35 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/102/three.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.3.0/simplex-noise.min.js"></script>
     <script src="js/effects.js"></script>
+
+    <script>
+        // Function to handle search or URL input
+        function handleSearchOrUrlInput() {
+            const input = document.getElementById("searchInput").value.trim();
+            if (input.includes("youtube.com")) {
+                showVideoOverlay(extractVideoIdFromUrl(input));
+            } else {
+                performSearch();
+            }
+        }
+
+        // Function to extract video ID from YouTube URL
+        function extractVideoIdFromUrl(url) {
+            const match = url.match(/[?&]v=([^&]+)/);
+            return match ? match[1] : null;
+        }
+
+        // Function to show video overlay
+        function showVideoOverlay(videoId) {
+            // Implement your video overlay logic here
+            alert("Video overlay logic here for video ID: " + videoId);
+        }
+
+        // Function to perform search
+        function performSearch() {
+            // Implement your search logic here
+            alert("Performing search");
+        }
+    </script>
 </body>
 </html>
