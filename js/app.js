@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (!apiKey) {
     apiKey = prompt(
-      "Por favor coloque sua chave do youtube (se não saber o que é, só mande mensagem pra mim):"
+      "Please enter your YouTube API key (if you don't know what this is, just message me):"
     );
     if (apiKey) {
       localStorage.setItem("youtubeApiKey", apiKey);
@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
   urlButton.addEventListener("click", () => handleUrlInput());
 
   updateApiKeyButton.addEventListener("click", () => {
-    apiKey = prompt("Coloque uma chave nova do youtube:");
+    apiKey = prompt("Enter a new YouTube API key:");
     if (apiKey) {
       localStorage.removeItem("youtubeApiKey");
       localStorage.setItem("youtubeApiKey", apiKey);
@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (videoId) {
         showVideoOverlay(videoId);
       } else {
-        alert("URL do YouTube inválido");
+        alert("Invalid YouTube URL");
       }
     }
   }
@@ -92,10 +92,10 @@ document.addEventListener("DOMContentLoaded", () => {
                   <button class="close-btn" onclick="closeOverlay()">×</button>
                   <img src="${video.thumbnails.high.url}" alt="${video.title}" class="thumbnail">
                   <h3>${video.title}</h3>
-                  <button class="download-btn" onclick="downloadVideo('${videoId}', 'true')">Baixar MP3</button>
-                  <button class="download-btn" onclick="downloadVideo('${videoId}', 'false')">Baixar MP4</button>
-                  <button class="download-btn" onclick="viewOnline('${videoId}', 'audio')">Ver Online MP3</button>
-                  <button class="download-btn" onclick="viewOnline('${videoId}', 'video')">Ver Online MP4</button>
+                  <button class="download-btn" onclick="downloadVideo('${videoId}', 'true')">Download MP3</button>
+                  <button class="download-btn" onclick="downloadVideo('${videoId}', 'false')">Download MP4</button>
+                  <button class="download-btn" onclick="viewOnline('${videoId}', 'audio')">View Online MP3</button>
+                  <button class="download-btn" onclick="viewOnline('${videoId}', 'video')">View Online MP4</button>
                 </div>
               `;
 
@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
             overlay.classList.add("visible");
           }, 10);
         } else {
-          alert("Vídeo não encontrado");
+          alert("Video not found");
         }
       })
       .catch((error) => console.error("Error fetching data:", error));
@@ -185,10 +185,10 @@ document.addEventListener("DOMContentLoaded", () => {
               <img src="${thumbnailUrl}" alt="${title}" class="thumbnail">
               <span class="duration">${videoDuration}</span>
               <div class="download-buttons">
-                <button class="download-btn" onclick="downloadVideo('${videoId}', 'true')">Baixar MP3</button>
-                <button class="download-btn" onclick="downloadVideo('${videoId}', 'false')">Baixar MP4</button>
-                <button class="download-btn" onclick="viewOnline('${videoId}', 'audio')">Ver Online MP3</button>
-                <button class="download-btn" onclick="viewOnline('${videoId}', 'video')">Ver Online MP4</button>
+                <button class="download-btn" onclick="downloadVideo('${videoId}', 'true')">Download MP3</button>
+                <button class="download-btn" onclick="downloadVideo('${videoId}', 'false')">Download MP4</button>
+                <button class="download-btn" onclick="viewOnline('${videoId}', 'audio')">View Online MP3</button>
+                <button class="download-btn" onclick="viewOnline('${videoId}', 'video')">View Online MP4</button>
               </div>
             </div>
             <div class="video-info">
@@ -225,12 +225,12 @@ document.addEventListener("DOMContentLoaded", () => {
         if (downloadUrl) {
           window.open(downloadUrl, "_blank");
         } else {
-          alert("Não foi possível encontrar o link para download. Desculpe.");
+          alert("Could not find download link. Sorry.");
         }
       })
       .catch((error) => {
-        console.error("Erro:", error);
-        alert("Erro ao tentar buscar o link de download.");
+        console.error("Error:", error);
+        alert("Error fetching download link.");
       });
   };
 
@@ -252,7 +252,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .then((data) => {
         if (data.status === "error") {
           alert(
-            "Este é um vídeo ao vivo. Aguarde o término da transmissão e tente novamente."
+            "This is a live video. Please wait for the broadcast to end and try again."
           );
           return;
         }
@@ -273,12 +273,12 @@ document.addEventListener("DOMContentLoaded", () => {
           }
           playerContainer.style.display = "flex";
         } else {
-          alert("Não foi possível encontrar o link para reprodução. Desculpe.");
+          alert("Could not find playback link. Sorry.");
         }
       })
       .catch((error) => {
-        console.error("Erro:", error);
-        alert("Erro ao tentar buscar o link de reprodução.");
+        console.error("Error:", error);
+        alert("Error fetching playback link.");
       });
   };
 
@@ -323,7 +323,7 @@ function formatDuration(duration) {
   return "Unknown";
 }
 
-// 3d visualizer shit here
+// 3d visualizer code here
 function clearScene() {
   const canvas = area.firstElementChild;
   area.removeChild(canvas);
