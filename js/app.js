@@ -4,9 +4,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const updateApiKeyButton = document.getElementById("updateApiKeyButton");
   const musicButton = document.getElementById("music");
   const loadMoreButton = document.getElementById("loadMoreButton");
-  const urlInput = document.getElementById("urlInput");
-  const searchForm = document.getElementById("searchForm");
-  const urlForm = document.getElementById("urlForm"); // Ensure this exists in your HTML
   const audioInput = document.getElementById("audio");
 
   const playerContainer = document.getElementById("player-container");
@@ -29,17 +26,15 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Event listeners
-  searchForm.addEventListener("submit", function (e) {
+  document.getElementById("searchForm").addEventListener("submit", function (e) {
     e.preventDefault();
-    performSearch();
+    const query = apiKeyInput.value.trim();
+    if (isYouTubeUrl(query)) {
+      handleUrlInput(query);
+    } else {
+      performSearch(query);
+    }
   });
-
-  if (urlForm) { // Check if urlForm exists before adding event listener
-    urlForm.addEventListener("submit", function (e) {
-      e.preventDefault();
-      handleUrlInput();
-    });
-  }
 
   updateApiKeyButton.addEventListener("click", () => {
     apiKey = prompt("Enter a new YouTube API key:");
@@ -51,21 +46,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   musicButton.addEventListener("click", () => {
     isMusicOnly = true;
-    performSearch();
+    performSearch("music");
   });
 
   loadMoreButton.addEventListener("click", () => {
     if (nextPageToken) {
-      performSearch(false, nextPageToken);
+      performSearch(apiKeyInput.value.trim(), nextPageToken);
     }
   });
 
-  function performSearch(isMusic = false, pageToken = "") {
-    const query = isMusic ? "music" : apiKeyInput.value.trim();
+  function performSearch(query, pageToken = "") {
     if (!apiKey) return;
 
     let url;
-    if (isMusic) {
+    if (isMusicOnly) {
       url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoCategoryId=10&maxResults=20&pageToken=${pageToken}&key=${apiKey}`;
     } else {
       url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(
@@ -105,10 +99,10 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="thumbnail-container">
               <img src="${thumbnailUrl}" alt="${title}" class="thumbnail">
               <div class="download-buttons">
-                <button class="download-btn" onclick="showVideoOverlay('${videoId}')">Download MP3</button>
-                <button class="download-btn" onclick="showVideoOverlay('${videoId}')">Download MP4</button>
-                <button class="download-btn" onclick="showVideoOverlay('${videoId}', 'audio')">View Online MP3</button>
-                <button class="download-btn" onclick="showVideoOverlay('${videoId}', 'video')">View Online MP4</button>
+                <button class="download-btn" onclick="downloadVideo('${videoId}', true)">Download MP3</button>
+                <button class="download-btn" onclick="downloadVideo('${videoId}', false)">Download MP4</button>
+                <button class="download-btn" onclick="viewOnline('${videoId}', 'audio')">View Online MP3</button>
+                <button class="download-btn" onclick="viewOnline('${videoId}', 'video')">View Online MP4</button>
               </div>
             </div>
             <div class="video-info">
@@ -120,8 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  function handleUrlInput() {
-    const url = urlInput.value.trim();
+  function handleUrlInput(url) {
     const videoId = extractVideoIdFromUrl(url);
     if (videoId) {
       showVideoOverlay(videoId);
@@ -130,7 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function showVideoOverlay(videoId, type) {
+  function showVideoOverlay(videoId) {
     const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${apiKey}`;
 
     fetch(url)
@@ -269,4 +262,8 @@ function closeWarning() {
       document.body.removeChild(overlay);
     }, 300);
   }
+}
+
+function isYouTubeUrl(url) {
+  return url.toLowerCase().includes("youtube.com");
 }
