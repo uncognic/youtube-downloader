@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="br">
+<html lang="en">
 <head>
     <title>Youtube Downloader</title>
     <link rel="icon" href="/favicon32.png" type="image/png" />
@@ -13,38 +13,38 @@
 <body id="content">
     <div class="warning">
         <button class="warn-btn" onclick="closeWarning()">×</button>
-        <p>AVISO:<br>Esse projeto foi feito para usos pessoais. Nós não permitimos pessoas baixarem arquivos com copyright. Os projetos usados para esse site foram <a href="https://cobalt.tools/">Cobalt</a> e a API do youtube.
-        Nós não salvamos nenhum arquivo, isso só é um agregador de links. Se tiver outras perguntas,<br> olhe nosso <a href="termos.html">Termos e serviços</a>.</p>
+        <p>WARNING:<br>This project was made for personal use. We do not allow downloading copyrighted files. The projects used for this site were <a href="https://cobalt.tools/">Cobalt</a> and the YouTube API.
+        We do not save any files, this is just a link aggregator. If you have other questions, please check our <a href="terms.html">Terms of Service</a>.</p>
     </div>
     
     <h1>Youtube Downloader</h1>
     <form id="searchForm" class="box" style="margin-bottom: 20px;">
-        <input type="text" id="searchInput" placeholder="Pesquisar Youtube..." />
+        <input type="text" id="searchInput" placeholder="Search on YouTube..." />
         <a href="#" id="searchButton">
             <i class="fas fa-search"></i>
         </a>
     </form>
     <form id="urlForm" class="box">
-        <input type="text" id="urlInput" placeholder="Coloque a URL do YouTube aqui..." />
+        <input type="text" id="urlInput" placeholder="Paste YouTube URL here..." />
         <a href="#" id="urlButton">
             <i class="fas fa-download"></i>
         </a>
     </form>
     <div id="results" class="results"></div>
-    <button id="loadMoreButton" class="load-more">Carregar Mais</button>
-    <button id="updateApiKeyButton" class="update-api-key-btn">Atualizar chave do youtube</button>
+    <button id="loadMoreButton" class="load-more">Load More</button>
+    <button id="updateApiKeyButton" class="update-api-key-btn">Update YouTube API Key</button>
     <div class="catalogue">
-        <button id="music" class="music-button">Músicas</button>
+        <button id="music" class="music-button">Music</button>
     </div>
     <div id="player-container">
         <div id="visualizer">
             <audio id="audio-player" controls></audio>
             <div id="canvisualizer" width="1214" height="951"></div>
-            <p>Clique na tela para começar a música, e clique denovo para pausar</p>
+            <p>Click on the screen to start the music, and click again to pause</p>
         </div>
         <video id="video-player" controls></video>
-      </div>
-      <!-- this is for the cursor effect, please ignore -->
+    </div>
+    <!-- This is for the cursor effect, please ignore -->
     
     <script src="js/app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/102/three.js"></script>
