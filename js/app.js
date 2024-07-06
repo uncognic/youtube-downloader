@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await fetchData(url);
             const videoIds = data.items.map((item) => item.id.videoId).join(",");
             const videoData = await fetchData(`https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${videoIds}&key=${apiKey}`);
-            displayResults(videoData.items);
+            displayResults(videoData.items, pageToken === "");
             nextPageToken = data.nextPageToken || "";
             loadMoreButton.style.display = nextPageToken ? "block" : "none";
         } catch (error) {
@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
     async function showVideoOverlay(videoId) {
         try {
             const videoData = await fetchData(`https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${videoId}&key=${apiKey}`);
-            displayResults(videoData.items);
+            displayResults(videoData.items, true);
         } catch (error) {
             console.error("Error fetching video data:", error);
         }
@@ -119,20 +119,10 @@ document.addEventListener("DOMContentLoaded", () => {
         return await response.json();
     }
 
-    function displayResults(items) {
-        resultsContainer.innerHTML = "";
+    function displayResults(items, clearPreviousResults = true) {
+        if (clearPreviousResults) {
+            resultsContainer.innerHTML = "";
+        }
+
         items.forEach((item) => {
-            const videoElement = document.createElement("div");
-            videoElement.classList.add("video-item");
-            videoElement.innerHTML = `
-                <img src="${item.snippet.thumbnails.medium.url}" alt="${item.snippet.title}">
-                <div class="video-info">
-                    <h3>${item.snippet.title}</h3>
-                    <p>${item.snippet.description}</p>
-                    <button onclick="showVideoOverlay('${item.id}')">Watch</button>
-                </div>
-            `;
-            resultsContainer.appendChild(videoElement);
-        });
-    }
-});
+            const videoElement = docume
