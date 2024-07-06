@@ -1,3 +1,5 @@
+// JavaScript ig im bored
+
 document.addEventListener("DOMContentLoaded", () => {
   const apiKeyInput = document.getElementById("searchInput");
   const resultsDiv = document.getElementById("results");
@@ -5,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const musicButton = document.getElementById("music");
   const loadMoreButton = document.getElementById("loadMoreButton");
   const urlInput = document.getElementById("urlInput");
+  const searchForm = document.getElementById("searchForm");
   const urlForm = document.getElementById("urlForm");
   const audioInput = document.getElementById("audio");
 
@@ -27,14 +30,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  document.getElementById("searchForm").addEventListener("submit", function (e) {
+  // Event listeners
+  searchForm.addEventListener("submit", function (e) {
     e.preventDefault();
-    const query = apiKeyInput.value.trim();
-    if (isValidYouTubeUrl(query)) {
-      handleUrlInput(query);
-    } else {
-      performSearch(query);
-    }
+    performSearch();
+  });
+
+  urlForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    handleUrlInput();
   });
 
   updateApiKeyButton.addEventListener("click", () => {
@@ -52,19 +56,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadMoreButton.addEventListener("click", () => {
     if (nextPageToken) {
-      performSearch(null, nextPageToken);
+      performSearch(false, nextPageToken);
     }
   });
 
-  function performSearch(query = "music", pageToken = "") {
+  function performSearch(isMusic = false, pageToken = "") {
+    const query = apiKeyInput.value;
     if (!apiKey) return;
 
     let url;
-    if (isMusicOnly) {
+    if (isMusic) {
       url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoCategoryId=10&maxResults=20&pageToken=${pageToken}&key=${apiKey}`;
     } else {
+      const searchQuery = query ? query : "music";
       url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(
-        query
+        searchQuery
       )}&type=video&maxResults=20&pageToken=${pageToken}&key=${apiKey}`;
     }
 
@@ -85,7 +91,38 @@ document.addEventListener("DOMContentLoaded", () => {
       .catch((error) => console.error("Error fetching data:", error));
   }
 
-  function handleUrlInput(url) {
+  function displayResults(videos) {
+    resultsDiv.innerHTML = "";
+
+    videos.forEach((video) => {
+      const { title, thumbnails } = video.snippet;
+      const videoId = video.id.videoId;
+      const thumbnailUrl = thumbnails.high.url;
+
+      const videoElement = document.createElement("div");
+      videoElement.className = "video-item";
+
+      videoElement.innerHTML = `
+            <div class="thumbnail-container">
+              <img src="${thumbnailUrl}" alt="${title}" class="thumbnail">
+              <div class="download-buttons">
+                <button class="download-btn" onclick="downloadVideo('${videoId}', true)">Download MP3</button>
+                <button class="download-btn" onclick="downloadVideo('${videoId}', false)">Download MP4</button>
+                <button class="download-btn" onclick="viewOnline('${videoId}', 'audio')">View Online MP3</button>
+                <button class="download-btn" onclick="viewOnline('${videoId}', 'video')">View Online MP4</button>
+              </div>
+            </div>
+            <div class="video-info">
+              <h3>${title}</h3>
+            </div>
+          `;
+
+      resultsDiv.appendChild(videoElement);
+    });
+  }
+
+  function handleUrlInput() {
+    const url = urlInput.value.trim();
     const videoId = extractVideoIdFromUrl(url);
     if (videoId) {
       showVideoOverlay(videoId);
@@ -110,8 +147,8 @@ document.addEventListener("DOMContentLoaded", () => {
                   <button class="close-btn" onclick="closeOverlay()">×</button>
                   <img src="${video.thumbnails.high.url}" alt="${video.title}" class="thumbnail">
                   <h3>${video.title}</h3>
-                  <button class="download-btn" onclick="downloadVideo('${videoId}', 'true')">Download MP3</button>
-                  <button class="download-btn" onclick="downloadVideo('${videoId}', 'false')">Download MP4</button>
+                  <button class="download-btn" onclick="downloadVideo('${videoId}', true)">Download MP3</button>
+                  <button class="download-btn" onclick="downloadVideo('${videoId}', false)">Download MP4</button>
                   <button class="download-btn" onclick="viewOnline('${videoId}', 'audio')">View Online MP3</button>
                   <button class="download-btn" onclick="viewOnline('${videoId}', 'video')">View Online MP4</button>
                 </div>
@@ -134,19 +171,104 @@ document.addEventListener("DOMContentLoaded", () => {
     return match ? match[1] : null;
   }
 
-  function isValidYouTubeUrl(url) {
-    return /^(https?\:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/gi.test(url);
+  function downloadVideo(videoId, audio) {
+    const cobaltApiUrl = "https://api.cobalt.tools/api/json";
+
+    fetch(cobaltApiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        url: `https://www.youtube.com/watch?v=${videoId}`,
+        isAudioOnly: audio,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        const downloadUrl = data.url;
+        if (downloadUrl) {
+          window.open(downloadUrl, "_blank");
+        } else {
+          alert("Could not find download link. Sorry.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("Error fetching download link.");
+      });
   }
 
-  window.closeOverlay = function () {
-    const overlay = document.querySelector(".video-overlay");
-    if (overlay) {
-      overlay.classList.add("fade-out");
+  function viewOnline(videoId, type) {
+    const cobaltApiUrl = "https://api.cobalt.tools/api/json";
 
-      setTimeout(() => {
-        document.body.removeChild(overlay);
-        document.body.classList.remove("blurred");
-      }, 300);
-    }
-  };
+    fetch(cobaltApiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        url: `https://www.youtube.com/watch?v=${videoId}`,
+        isAudioOnly: type === "audio",
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "error") {
+          alert(
+            "This is a live video. Please wait for the broadcast to end and try again."
+          );
+          return;
+        }
+
+        const playbackUrl = data.url;
+        if (playbackUrl) {
+          if (type === "video") {
+            videoPlayer.src = playbackUrl;
+            videoPlayer.style.display = "block";
+            audioPlayer.style.display = "none";
+          } else {
+            audioPlayer.crossOrigin = "anonymous";
+            audioPlayer.src = playbackUrl;
+            audioPlayer.style.display = "block";
+            videoPlayer.style.display = "none";
+            audioPlayer.load();
+          }
+          playerContainer.style.display = "flex";
+        } else {
+          alert("Could not find playback link. Sorry.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("Error fetching playback link.");
+      });
+  }
+
 });
+
+function closeOverlay() {
+  const overlay = document.querySelector(".video-overlay");
+  if (overlay) {
+    overlay.classList.add("fade-out");
+
+    setTimeout(() => {
+      document.body.removeChild(overlay);
+      document.body.classList.remove("blurred");
+    }, 300);
+  }
+}
+
+function closeWarning() {
+  const overlay = document.querySelector(".warning");
+  if (overlay) {
+    overlay.classList.add("fade-out");
+
+    setTimeout(() => {
+      document.body.removeChild(overlay);
+    }, 300);
+  }
+}
+
