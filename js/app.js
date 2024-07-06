@@ -1,5 +1,3 @@
-// JavaScript ig im bored
-
 document.addEventListener("DOMContentLoaded", () => {
   const apiKeyInput = document.getElementById("searchInput");
   const resultsDiv = document.getElementById("results");
@@ -61,16 +59,15 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   function performSearch(isMusic = false, pageToken = "") {
-    const query = apiKeyInput.value;
+    const query = isMusic ? "music" : apiKeyInput.value.trim();
     if (!apiKey) return;
 
     let url;
     if (isMusic) {
       url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoCategoryId=10&maxResults=20&pageToken=${pageToken}&key=${apiKey}`;
     } else {
-      const searchQuery = query ? query : "music";
       url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(
-        searchQuery
+        query
       )}&type=video&maxResults=20&pageToken=${pageToken}&key=${apiKey}`;
     }
 
@@ -106,10 +103,10 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="thumbnail-container">
               <img src="${thumbnailUrl}" alt="${title}" class="thumbnail">
               <div class="download-buttons">
-                <button class="download-btn" onclick="downloadVideo('${videoId}', true)">Download MP3</button>
-                <button class="download-btn" onclick="downloadVideo('${videoId}', false)">Download MP4</button>
-                <button class="download-btn" onclick="viewOnline('${videoId}', 'audio')">View Online MP3</button>
-                <button class="download-btn" onclick="viewOnline('${videoId}', 'video')">View Online MP4</button>
+                <button class="download-btn" onclick="showVideoOverlay('${videoId}')">Download MP3</button>
+                <button class="download-btn" onclick="showVideoOverlay('${videoId}')">Download MP4</button>
+                <button class="download-btn" onclick="showVideoOverlay('${videoId}', 'audio')">View Online MP3</button>
+                <button class="download-btn" onclick="showVideoOverlay('${videoId}', 'video')">View Online MP4</button>
               </div>
             </div>
             <div class="video-info">
@@ -131,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function showVideoOverlay(videoId) {
+  function showVideoOverlay(videoId, type) {
     const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${apiKey}`;
 
     fetch(url)
@@ -271,4 +268,3 @@ function closeWarning() {
     }, 300);
   }
 }
-
